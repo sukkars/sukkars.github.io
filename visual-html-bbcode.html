@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rich Text (WYSWYG) or HTML to BBCode Converter</title>
+
+<style>
+ .container {
+            width: 80%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container div {
+            margin-bottom: 15px;
+        }
+
+        .editable-box {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        #richTextInput {
+            max-height: 250px;
+            overflow-y: auto;
+            resize: none; /* Disable resizing */
+        }
+
+        .toolbar {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .toolbar button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            font-weight: normal;
+            color: black; /* Ensure text is visible */
+        }
+
+        .toolbar button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .toolbar button:active {
+            background-color: #d0d0d0;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .buttons-container {
+            margin-top: 10px; /* Adjusts the position of the buttons */
+        }
+
+        .editable-box {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+</style>
+  </head>
+<body>
+    <h1>Rich Text (WYSWYG) or HTML to BBCode Converter</h1>
+
+    <div class="container">
+        <div>
+            <!-- Toolbar for Rich Text Editor -->
+            <div class="toolbar">
+                <button onclick="document.execCommand('bold', false, null);"><b>B</b></button>
+                <button onclick="document.execCommand('italic', false, null);"><i>I</i></button>
+                <button onclick="document.execCommand('underline', false, null);"><u>U</u></button>
+                <button onclick="document.execCommand('justifyCenter', false, null);">Center</button>
+                <button onclick="document.execCommand('strikethrough', false, null);"><strike>S</strike></button>
+                <button onclick="document.execCommand('fontSize', false, '5');">H2</button>
+                <button onclick="document.execCommand('foreColor', false, '#ff0000');"><font color="#ff0000">Red</font></button>
+                <button onclick="document.execCommand('foreColor', false, '#00acc1');"><font color="#00acc1">Cyan</font></button>
+                <button onclick="document.execCommand('foreColor', false, '#ffd700');"><font color="#ffd700">Gold</font></button>
+                <button onclick="document.execCommand('foreColor', false, '#ffffff');"><font color="#000">White</font></button>
+            </div>
+            <label for="richTextInput">Paste Rich Text here:</label>
+            <div id="richTextInput" contenteditable="true" class="editable-box"></div>
+            
+            <!-- Buttons for conversion below rich text input -->
+            <div class="buttons-container">
+                <button onclick="convertToHTML()">Convert to HTML</button>
+                <button onclick="convertToBBCode()">Convert to BBCode</button>
+            </div>
+        </div>
+
+        <div>
+            <label for="htmlOutput">HTML Output:</label>
+            <textarea id="htmlOutput" class="editable-box"></textarea>
+        </div>
+
+        <div>
+            <label for="bbcodeOutput">BBCode Output:</label>
+            <textarea id="bbcodeOutput" class="editable-box"></textarea>
+        </div>
+    </div>
+<hr/>
+<center><a href="https://github.com/almahmudbd/convert-to-bbcode" target=”_blank”>see the code</a></center>
+
+  
+    <script>
+    // Function to convert rich text to HTML and display in the HTML output area
+function convertToHTML() {
+    const inputHTML = document.getElementById("richTextInput").innerHTML;
+    document.getElementById("htmlOutput").value = inputHTML;
+}
+
+// Function to convert HTML to BBCode and display in the BBCode output area
+function convertToBBCode() {
+    let htmlContent = document.getElementById("htmlOutput").value;
+    htmlContent = htmlContent.replace(/ style="[^"]*"/g, "");
+    htmlContent = htmlContent.replace(/&nbsp;/g, " "); 
+
+    let bbCodeText = htmlContent
+        .replace(/<b>(.*?)<\/b>/g, "[b]$1[/b]")
+        .replace(/<strong>(.*?)<\/strong>/g, "[b]$1[/b]")
+        .replace(/<i>(.*?)<\/i>/g, "[i]$1[/i]")
+        .replace(/<em>(.*?)<\/em>/g, "[i]$1[/i]")
+        .replace(/<code>(.*?)<\/code>/g, "[i]$1[/i]")
+        .replace(/<u>(.*?)<\/u>/g, "[u]$1[/u]")
+        .replace(/<center>(.*?)<\/center>/g, "[center]$1[/center]")
+        .replace(/<a.*?href="(.*?)".*?>(.*?)<\/a>/g, "[url=$1]$2[/url]")
+        .replace(/<img src="(.*?)"(.*?)>/g, "[img]$1[/img]")
+        .replace(/<iframe.*?src="https:\/\/www\.youtube\.com\/embed\/(.*?)".*?>.*?<\/iframe>/g, "[video=$1]")
+        .replace(/<blockquote>(.*?)<\/blockquote>/g, "[quote]$1[/quote]")
+        .replace(/<hr\s*\/?>/g, "[hr]") 
+        .replace(/<span class="df">(.*?)<\/span>/g, "[df]$1[/df]")
+
+        // Convert <font> with color and size attributes to [color] and [size]
+        .replace(/<font color="(#[0-9a-fA-F]{6}|[a-zA-Z]+)">(.*?)<\/font>/g, "[color=$1]$2[/color]")
+        .replace(/<font size="(\d+)">(.*?)<\/font>/g, "[size=$1]$2[/size]")
+        .replace(/<font color="(#[0-9a-fA-F]{6}|[a-zA-Z]+)" size="(\d+)">(.*?)<\/font>/g, "[color=$1][size=$2]$3[/size][/color]")
+        .replace(/<\/?font[^>]*>/g, "")
+
+     // Convert <h1> to <h4> tags to BBCode [size]
+        .replace(/<h1>(.*?)<\/h1>/g, "[size=7]$1[/size]")
+        .replace(/<h2>(.*?)<\/h2>/g, "[size=6]$1[/size]")
+        .replace(/<h3>(.*?)<\/h3>/g, "[size=5]$1[/size]")
+        .replace(/<h4>(.*?)<\/h4>/g, "[size=4]$1[/size]")
+
+   // Convert <ul> and <ol> to [*] lists
+        .replace(/<ul>(.*?)<\/ul>/gs, function(match, p1) {
+            return p1.replace(/<li>(.*?)<\/li>/gs, "[*]$1\n");
+        })
+        .replace(/<ol>(.*?)<\/ol>/gs, function(match, p1) {
+            return p1.replace(/<li>(.*?)<\/li>/gs, "[*]$1\n");
+        })
+        
+     // Remove <div> tags, replace with line breaks
+        .replace(/<div.*?>/g, "\n")
+        .replace(/<\/div>/g, "")
+
+        // Remove <span> and <p> tags, if not needed
+        .replace(/<span[^>]*>/g, "")
+        .replace(/<\/span>/g, "")
+        .replace(/<p[^>]*>/g, "")
+        
+        // Replace <br> and </p> tags with line breaks
+        .replace(/<br\s*\/?>/g, "\n")
+        .replace(/<\/p>/g, "\n");
+
+    document.getElementById("bbcodeOutput").value = bbCodeText;
+}
+    </script>
+</body>
+</html>
