@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        .visualizer-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            border-radius: 12px;
+            justify-content: center;
+        }
+        
+        .bar {
+            width: 2%;
+            height: 100%;
+            display: inline-block;
+            margin: 0 1%;
+            background: linear-gradient(to top, #3b82f6, #9333ea);
+            transform-origin: bottom;
+            border-radius: 5px;
+            transition: transform 0.1s ease-out;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.8) 0%, rgba(147,51,234,0.4) 70%);
+            transform-origin: center;
+            transition: all 0.2s ease-out;
+        }
+        
+        .wave {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: url(#waveGradient);
+            stroke-width: 15px;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3b82f6, #9333ea);
+            transform-origin: center;
+            transition: all 0.3s ease-out;
+        }
+        
+        .spectrum-line {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to top, #3b82f6, #9333ea);
+            transform-origin: bottom;
+            transition: height 0.1s ease-out;
+        }
+        
+        .radial-bar {
+            position: absolute;
+            width: 15px;
+            background: linear-gradient(to top, #3b82f6, #9333ea);
+            transform-origin: bottom;
+            border-radius: 2px;
+            transition: height 0.1s ease-out;
+        }
+
+        .rounded-wave-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .rounded-wave {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            opacity: 0.7;
+            animation: pulse 3s infinite;
+        }
+
+        .wave-1 {
+            width: 180px;
+            height: 180px;
+            z-index: 1;
+        }
+
+        .wave-2 {
+            width: 240px;
+            height: 240px;
+            z-index: 0;
+            animation-delay: 0.5s;
+        }
+
+        .wave-3 {
+            width: 300px;
+            height: 300px;
+            z-index: -1;
+            animation-delay: 1s;
+        }
+
+        .center-image {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            z-index: 10;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
+            border: 2px solid rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+        }
+
+        .glow {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+      
+        .visualizer-style-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        
+        .bidirectional-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .bidirectional-wave path {
+            fill: url(#bidirectionalWaveGradient);
+            opacity: 0.8;
+            transition: all 0.1s ease-out;
+        }
+        
+        .rounded-wave path {
+            fill: url(#roundedWaveGradient);
+            opacity: 0.8;
+            transition: all 0.1s ease-out;
+        }
+        
+        .image-upload-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 41, 59, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 100;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .image-upload-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .slider-container {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .slider-value {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #334155;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
+
+        .upload-btn {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+
+        .upload-btn:hover {
+            background: rgba(37, 99, 235, 0.9);
+            transform: scale(1.1);
+        }
+
+        .upload-btn i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8 fade-in">
+            <h1 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-2">
+                Sound Visualizer
+            </h1>
+            <p class="text-gray-400 text-lg">Transform your voice into stunning visual art</p>
+        </header>
+        
+        <div class="bg-gray-800 rounded-xl p-6 shadow-xl mb-8 glow">
+            <div class="flex flex-wrap justify-between items-center mb-6">
+                <div class="mb-4 md:mb-0">
+                    <button id="startBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium transition-all transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-microphone mr-2"></i> Start Microphone
+                    </button>
+                    <button id="stopBtn" disabled class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-full font-medium transition-all transform hover:scale-105 active:scale-95 ml-2">
+                        <i class="fas fa-stop mr-2"></i> Stop
+                    </button>
+                </div>
+                
+                <div class="flex items-center">
+                    <div id="status" class="text-gray-400 flex items-center mr-4">
+                        <i class="fas fa-info-circle mr-2"></i>  Mic inactive ❗
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visualizer-container" id="visualizer">
+                <!-- Bars Visualizer -->
+                <div id="barsContainer" class="h-full flex items-end justify-center"></div>
+                
+                <!-- Circles Visualizer -->
+                <div id="circlesContainer" class="h-full w-full relative" style="display: none;"></div>
+                
+                <!-- Wave Visualizer -->
+                <svg id="waveContainer" class="wave" viewBox="0 0 1000 200" preserveAspectRatio="none" style="display: none;">
+                    <defs>
+                        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#3b82f6" />
+                            <stop offset="100%" stop-color="#9333ea" />
+                        </linearGradient>
+                    </defs>
+                    <path id="wavePath" d=""></path>
+                </svg>
+                
+                <!-- Bidirectional Wave Visualizer -->
+                <svg id="bidirectionalWaveContainer" class="bidirectional-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" style="display: none;">
+                    <defs>
+                        <linearGradient id="bidirectionalWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#3b82f6" />
+                            <stop offset="100%" stop-color="#9333ea" />
+                        </linearGradient>
+                    </defs>
+                    <path id="bidirectionalWavePathTop" d=""></path>
+                    <path id="bidirectionalWavePathBottom" d=""></path>
+                </svg>
+                
+                <!-- Rounded Wave Visualizer -->
+                <div id="roundedWaveContainer" class="rounded-wave-container" style="display: none;">
+                    <div id="centerImage" class="center-image pulse"></div>
+                    <svg id="roundedWave" class="rounded-wave" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+                        <defs>
+                            <radialGradient id="roundedWaveGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                <stop offset="0%" stop-color="#3b82f6" />
+                                <stop offset="100%" stop-color="#9333ea" />
+                            </radialGradient>
+                        </defs>
+                        <path id="roundedWavePath" d=""></path>
+                    </svg>
+                    <button id="changeImageBtn" class="upload-btn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                
+                <!-- Image Upload Modal -->
+                <div id="imageUploadContainer" class="image-upload-container">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Change Center Image</h3>
+                    <div class="mb-4">
+                        <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                        <label for="imageUpload" class="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg cursor-pointer text-center transition-all mb-3">
+                            <i class="fas fa-upload mr-2"></i> Upload Image
+                        </label>
+                        <p class="text-gray-400 text-sm mb-2 text-center">Or use a URL:</p>
+                        <input type="text" id="imageUrl" placeholder="Enter image URL" class="w-full px-4 py-2 bg-gray-700 rounded-lg text-white border border-gray-600 focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div class="flex justify-between">
+                        <button id="cancelImageBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all flex-1 mr-2">
+                            Cancel
+                        </button>
+                        <button id="applyImageBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all flex-1 ml-2">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Particles Visualizer -->
+                <div id="particlesContainer" class="h-full w-full relative" style="display: none;"></div>
+                
+                <!-- Spectrum Visualizer -->
+                <div id="spectrumContainer" class="h-full w-full relative" style="display: none;"></div>
+                
+                <!-- Radial Visualizer -->
+                <div id="radialContainer" class="h-full w-full relative" style="display: none;"></div>
+            </div>
+<br/> 
+<div class="mt-6 flex space-x-4 w-full">
+    <!-- Sensitivity -->
+    <div class="w-[30%]">
+        <div class="flex justify-between text-sm mb-1">
+            <span>Sensitivity:</span>
+            <span id="sensitivityValue">100%</span>
+        </div>
+        <input type="range" id="sensitivity" min="10" max="300" value="100" class="w-full">
+    </div>
+
+    <!-- Smoothness -->
+    <div class="w-[20%]">
+        <div class="flex justify-between text-sm mb-1">
+            <span>Smoothness:</span>
+            <span id="smoothnessValue">5</span>
+        </div>
+        <input type="range" id="smoothness" min="1" max="30" value="5" class="w-full">
+    </div>
+</div>
+            <div class="mt-6">
+                <span class="text-gray-400 mr-3">Visual Style:</span>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <button data-style="bars" class="visualizer-style-btn bg-blue-600 text-white px-4 py-2 rounded-full text-sm transition-all active">Bars</button>
+                    <button data-style="circles" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Circles</button>
+                    <button data-style="wave" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Wave</button>
+                    <button data-style="bidirectional" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Bidirectional</button>
+                    <button data-style="rounded" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Rounded</button>
+                    <button data-style="particles" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Particles</button>
+                    <button data-style="spectrum" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Spectrum</button>
+                    <button data-style="radial" class="visualizer-style-btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm transition-all">Radial</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-blue-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-chart-bar text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Bar Visualizer</h3>
+                </div>
+                <p class="text-gray-400">Classic frequency bars that rise and fall with your voice. Perfect for seeing the different frequencies in your sound.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-purple-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-circle-notch text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Circle Visualizer</h3>
+                </div>
+                <p class="text-gray-400">Pulsing circles that respond to volume. The more intense your voice, the more circles appear and grow.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-indigo-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-wave-square text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Wave Visualizer</h3>
+                </div>
+                <p class="text-gray-400">Smooth waveform that undulates with your voice. Creates beautiful flowing patterns from your sound.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-pink-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-exchange-alt text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Bidirectional Wave</h3>
+                </div>
+                <p class="text-gray-400">Waveform that expands both upwards and downwards with a beautiful gradient, creating a symmetrical visualization of your sound.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-teal-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-circle text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Rounded Wave</h3>
+                </div>
+                <p class="text-gray-400">Circular waveform with a central image that pulses with your voice, creating a hypnotic radial effect with a vibrant gradient.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-orange-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-atom text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Particle Visualizer</h3>
+                </div>
+                <p class="text-gray-400">Dynamic particles that dance with your voice. Each particle responds to different frequency ranges.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-yellow-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-sliders-h text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Spectrum Visualizer</h3>
+                </div>
+                <p class="text-gray-400">Vertical lines representing the full frequency spectrum. See the complete range of your sound.</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-6 shadow-lg hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="bg-red-600 p-3 rounded-full mr-3">
+                        <i class="fas fa-bullseye text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Radial Visualizer</h3>
+                </div>
+                <p class="text-gray-400">Circular bars radiating from the center. Creates a hypnotic pattern that responds to your voice.</p>
+            </div>
+        </div>
+        
+        <footer class="text-center text-gray-500 text-sm mt-8">
+          <p>Sound Visualizer App | Created by <a href="https://github.com/almahmudbd/sound-visualizer" target"_blank">almahmud</a></p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const statusEl = document.getElementById('status');
+            const visualizer = document.getElementById('visualizer');
+            const barsContainer = document.getElementById('barsContainer');
+            const circlesContainer = document.getElementById('circlesContainer');
+            const waveContainer = document.getElementById('waveContainer');
+            const wavePath = document.getElementById('wavePath');
+            const bidirectionalWaveContainer = document.getElementById('bidirectionalWaveContainer');
+            const bidirectionalWavePathTop = document.getElementById('bidirectionalWavePathTop');
+            const bidirectionalWavePathBottom = document.getElementById('bidirectionalWavePathBottom');
+            const roundedWaveContainer = document.getElementById('roundedWaveContainer');
+            const centerImage = document.getElementById('centerImage');
+            const roundedWave = document.getElementById('roundedWave');
+            const roundedWavePath = document.getElementById('roundedWavePath');
+            const particlesContainer = document.getElementById('particlesContainer');
+            const spectrumContainer = document.getElementById('spectrumContainer');
+            const radialContainer = document.getElementById('radialContainer');
+            const styleBtns = document.querySelectorAll('.visualizer-style-btn');
+            const sensitivitySlider = document.getElementById('sensitivity');
+            const smoothnessSlider = document.getElementById('smoothness');
+            const sensitivityValue = document.getElementById('sensitivityValue');
+            const smoothnessValue = document.getElementById('smoothnessValue');
+            const changeImageBtn = document.getElementById('changeImageBtn');
+            const imageUploadContainer = document.getElementById('imageUploadContainer');
+            const imageUpload = document.getElementById('imageUpload');
+            const imageUrl = document.getElementById('imageUrl');
+            const cancelImageBtn = document.getElementById('cancelImageBtn');
+            const applyImageBtn = document.getElementById('applyImageBtn');
+            
+            // Set default image
+            centerImage.style.backgroundImage = 'url("https://i.ibb.co.com/kVvn0mqM/Sukkar-Shop-mini-logo.png")';
+            
+            // Audio context variables
+            let audioContext;
+            let analyser;
+            let microphone;
+            let dataArray;
+            let animationId;
+            let isActive = false;
+            let currentStyle = 'bars';
+            let sensitivity = 100;
+            let smoothness = 5;
+            let lastValues = [];
+            
+            // Initialize visualizers
+            initializeBars();
+            initializeSpectrum();
+            initializeRadial();
+            
+            // Update slider values display
+            sensitivitySlider.addEventListener('input', function() {
+                sensitivity = parseInt(this.value);
+                sensitivityValue.textContent = `${sensitivity}%`;
+            });
+            
+            smoothnessSlider.addEventListener('input', function() {
+                smoothness = parseInt(this.value);
+                smoothnessValue.textContent = smoothness;
+            });
+            
+            function initializeBars() {
+                // Create 30 bars for the bar visualizer
+                for (let i = 0; i < 30; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    barsContainer.appendChild(bar);
+                }
+            }
+            
+            function initializeSpectrum() {
+                // Create 128 lines for the spectrum visualizer
+                for (let i = 0; i < 128; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'spectrum-line';
+                    line.style.left = `${(i / 128) * 100}%`;
+                    spectrumContainer.appendChild(line);
+                    
+                    // Initialize last values array
+                    lastValues[i] = 0;
+                }
+            }
+            
+            function initializeRadial() {
+                // Create 60 radial bars (6 groups of 10)
+                const centerX = 50;
+                const centerY = 50;
+                const radius = 40;
+                
+                for (let group = 0; group < 6; group++) {
+                    for (let i = 0; i < 10; i++) {
+                        const angle = (group * 60 + i * 6) * (Math.PI / 180);
+                        const x = centerX + radius * Math.cos(angle);
+                        const y = centerY + radius * Math.sin(angle);
+                        
+                        const bar = document.createElement('div');
+                        bar.className = 'radial-bar';
+                        bar.style.left = `${x}%`;
+                        bar.style.top = `${y}%`;
+                        bar.style.transform = `rotate(${group * 60 + i * 6}deg)`;
+                        radialContainer.appendChild(bar);
+                    }
+                }
+            }
+            
+            // Style buttons event listeners
+            styleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    styleBtns.forEach(b => {
+                        b.classList.remove('bg-blue-600', 'hover:bg-gray-600', 'active');
+                        b.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                    });
+                    this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                    this.classList.add('bg-blue-600', 'active');
+                    
+                    // Set current style
+                    currentStyle = this.dataset.style;
+                    
+                    // Hide all containers
+                    barsContainer.style.display = 'none';
+                    circlesContainer.style.display = 'none';
+                    waveContainer.style.display = 'none';
+                    bidirectionalWaveContainer.style.display = 'none';
+                    roundedWaveContainer.style.display = 'none';
+                    particlesContainer.style.display = 'none';
+                    spectrumContainer.style.display = 'none';
+                    radialContainer.style.display = 'none';
+                    
+                    // Show selected container
+                    if (currentStyle === 'bars') {
+                        barsContainer.style.display = 'flex';
+                    } else if (currentStyle === 'circles') {
+                        circlesContainer.style.display = 'block';
+                    } else if (currentStyle === 'wave') {
+                        waveContainer.style.display = 'block';
+                    } else if (currentStyle === 'bidirectional') {
+                        bidirectionalWaveContainer.style.display = 'block';
+                    } else if (currentStyle === 'rounded') {
+                        roundedWaveContainer.style.display = 'flex';
+                    } else if (currentStyle === 'particles') {
+                        particlesContainer.style.display = 'block';
+                    } else if (currentStyle === 'spectrum') {
+                        spectrumContainer.style.display = 'block';
+                    } else if (currentStyle === 'radial') {
+                        radialContainer.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Set bars as default
+            document.querySelector('[data-style="bars"]').click();
+            
+            // Image upload functionality
+            changeImageBtn.addEventListener('click', function() {
+                imageUploadContainer.classList.add('active');
+            });
+            
+            cancelImageBtn.addEventListener('click', function() {
+                imageUploadContainer.classList.remove('active');
+                imageUrl.value = '';
+                imageUpload.value = '';
+            });
+            
+            applyImageBtn.addEventListener('click', function() {
+                if (imageUrl.value) {
+                    // Use URL if provided
+                    centerImage.style.backgroundImage = `url("${imageUrl.value}")`;
+                    imageUploadContainer.classList.remove('active');
+                    imageUrl.value = '';
+                } else if (imageUpload.files && imageUpload.files[0]) {
+                    // Use uploaded file if provided
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        centerImage.style.backgroundImage = `url("${e.target.result}")`;
+                        imageUploadContainer.classList.remove('active');
+                        imageUpload.value = '';
+                    };
+                    reader.readAsDataURL(imageUpload.files[0]);
+                }
+            });
+            
+            // Start microphone
+            startBtn.addEventListener('click', async function() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    
+                    // Create audio context
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+                    
+                    const source = audioContext.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    
+                    dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    
+                    isActive = true;
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    statusEl.innerHTML = '<i class="fas fa-check-circle mr-2 text-green-400"></i> Microphone active';
+                    
+                    // Start visualization
+                    visualize();
+                } catch (err) {
+                    console.error('Error accessing microphone:', err);
+                    statusEl.innerHTML = '<i class="fas fa-exclamation-circle mr-2 text-red-400"></i> Microphone access denied';
+                }
+            });
+            
+            // Stop microphone
+            stopBtn.addEventListener('click', function() {
+                if (audioContext) {
+                    if (audioContext.state !== 'closed') {
+                        audioContext.close();
+                    }
+                }
+                
+                if (microphone) {
+                    microphone.getTracks().forEach(track => track.stop());
+                }
+                
+                isActive = false;
+                cancelAnimationFrame(animationId);
+                
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                statusEl.innerHTML = '<i class="fas fa-info-circle mr-2"></i> Mic inactive ❗';
+                
+                // Reset visualizations
+                resetVisualizers();
+            });
+            
+            function resetVisualizers() {
+                // Reset bars
+                const bars = document.querySelectorAll('.bar');
+                bars.forEach(bar => {
+                    bar.style.transform = 'scaleY(0)';
+                });
+                
+                // Reset circles
+                circlesContainer.innerHTML = '';
+                
+                // Reset wave
+                wavePath.setAttribute('d', '');
+                
+                // Reset bidirectional wave
+                bidirectionalWavePathTop.setAttribute('d', '');
+                bidirectionalWavePathBottom.setAttribute('d', '');
+                
+                // Reset rounded wave
+                roundedWavePath.setAttribute('d', '');
+                
+                // Reset particles
+                particlesContainer.innerHTML = '';
+                
+                // Reset spectrum
+                const spectrumLines = document.querySelectorAll('.spectrum-line');
+                spectrumLines.forEach(line => {
+                    line.style.height = '0';
+                });
+                
+                // Reset radial
+                const radialBars = document.querySelectorAll('.radial-bar');
+                radialBars.forEach(bar => {
+                    bar.style.height = '0';
+                });
+            }
+            
+            // Visualization function
+            function visualize() {
+                if (!isActive) return;
+                
+                analyser.getByteFrequencyData(dataArray);
+                
+                if (currentStyle === 'bars') {
+                    // Update bars
+                    const bars = document.querySelectorAll('.bar');
+                    for (let i = 0; i < bars.length; i++) {
+                        const index = Math.floor(i * (dataArray.length / bars.length));
+                        const rawValue = dataArray[index] / 255;
+                        const value = applySmoothing(rawValue * (sensitivity / 100), i);
+                        bars[i].style.transform = `scaleY(${value})`;
+                    }
+                } 
+                else if (currentStyle === 'circles') {
+                    // Clear old circles
+                    circlesContainer.innerHTML = '';
+                    
+                    // Create new circles based on frequency data
+                    for (let i = 0; i < dataArray.length; i += 5) {
+                        const value = dataArray[i] / 255;
+                        if (value > 0.2) { // Only show significant frequencies
+                            const circle = document.createElement('div');
+                            circle.className = 'circle pulse';
+                            
+                            // Random position
+                            const x = Math.random() * 100;
+                            const y = Math.random() * 100;
+                            
+                            // Size based on frequency value
+                            const size = 5 + (value * 100 * (sensitivity / 100));
+                            
+                            circle.style.width = `${size}px`;
+                            circle.style.height = `${size}px`;
+                            circle.style.left = `${x}%`;
+                            circle.style.top = `${y}%`;
+                            circle.style.opacity = value;
+                            circle.style.animationDelay = `${Math.random() * 0.5}s`;
+                            
+                            circlesContainer.appendChild(circle);
+                        }
+                    }
+                } 
+                else if (currentStyle === 'wave') {
+                    // Create wave path
+                    let pathData = 'M 0 100';
+                    const segmentWidth = 1000 / (dataArray.length - 1);
+                    
+                    for (let i = 0; i < dataArray.length; i++) {
+                        const rawValue = dataArray[i] / 255;
+                        const value = applySmoothing(rawValue, i);
+                        const y = 100 - (value * 100 * (sensitivity / 100));
+                        pathData += ` L ${i * segmentWidth} ${y}`;
+                    }
+                    
+                    pathData += ' L 1000 100 Z';
+                    wavePath.setAttribute('d', pathData);
+                } 
+                else if (currentStyle === 'bidirectional') {
+                    // Create bidirectional wave path
+                    let pathDataTop = 'M 0 100';
+                    let pathDataBottom = 'M 0 100';
+                    const segmentWidth = 1000 / (dataArray.length - 1);
+                    
+                    for (let i = 0; i < dataArray.length; i++) {
+                        const rawValue = dataArray[i] / 255;
+                        const value = applySmoothing(rawValue, i);
+                        const yTop = 100 - (value * 100 * (sensitivity / 100));
+                        const yBottom = 100 + (value * 100 * (sensitivity / 100));
+                        
+                        pathDataTop += ` L ${i * segmentWidth} ${yTop}`;
+                        pathDataBottom += ` L ${i * segmentWidth} ${yBottom}`;
+                    }
+                    
+                    pathDataTop += ' L 1000 100 Z';
+                    pathDataBottom += ' L 1000 100 Z';
+                    
+                    bidirectionalWavePathTop.setAttribute('d', pathDataTop);
+                    bidirectionalWavePathBottom.setAttribute('d', pathDataBottom);
+                } 
+                else if (currentStyle === 'rounded') {
+                    // Create rounded wave path
+                    const centerX = 500;
+                    const centerY = 500;
+                    const radius = 400;
+                    const numPoints = dataArray.length;
+                    let pathData = '';
+                    
+                    for (let i = 0; i <= numPoints; i++) {
+                        const index = i % numPoints;
+                        const rawValue = dataArray[index] / 255;
+                        const value = applySmoothing(rawValue, index);
+                        const angle = (i / numPoints) * Math.PI * 2;
+                        const pointRadius = radius + (value * 200 * (sensitivity / 100));
+                        
+                        const x = centerX + pointRadius * Math.cos(angle);
+                        const y = centerY + pointRadius * Math.sin(angle);
+                        
+                        if (i === 0) {
+                            pathData = `M ${x} ${y}`;
+                        } else {
+                            pathData += ` L ${x} ${y}`;
+                        }
+                    }
+                    
+                    pathData += ' Z';
+                    roundedWavePath.setAttribute('d', pathData);
+                    
+                    // Pulse the center image based on average volume
+                    const avgValue = dataArray.reduce((sum, val) => sum + val, 0) / dataArray.length / 255;
+                    centerImage.style.transform = `scale(${1 + avgValue * 0.2})`;
+                } 
+                else if (currentStyle === 'particles') {
+                    // Clear old particles
+                    particlesContainer.innerHTML = '';
+                    
+                    // Create particles based on frequency data
+                    for (let i = 0; i < dataArray.length; i += 3) {
+                        const value = dataArray[i] / 255;
+                        if (value > 0.1) {
+                            const particle = document.createElement('div');
+                            particle.className = 'particle';
+                            
+                            // Position based on frequency index
+                            const x = (i / dataArray.length) * 100;
+                            const y = 50 + (Math.random() * 40 - 20);
+                            
+                            // Size and opacity based on value
+                            const size = 5 + (value * 20 * (sensitivity / 100));
+                            const opacity = 0.3 + (value * 0.7);
+                            
+                            // Color variation based on frequency
+                            const hue = 240 + (i / dataArray.length * 60);
+                            
+                            particle.style.width = `${size}px`;
+                            particle.style.height = `${size}px`;
+                            particle.style.left = `${x}%`;
+                            particle.style.top = `${y}%`;
+                            particle.style.opacity = opacity;
+                            particle.style.background = `linear-gradient(45deg, hsl(${hue}, 80%, 60%), hsl(${hue + 30}, 80%, 60%))`;
+                            particle.style.transform = `translate(-50%, -50%) scale(${1 + value})`;
+                            
+                            particlesContainer.appendChild(particle);
+                        }
+                    }
+                } 
+                else if (currentStyle === 'spectrum') {
+                    // Update spectrum lines
+                    const spectrumLines = document.querySelectorAll('.spectrum-line');
+                    
+                    for (let i = 0; i < spectrumLines.length; i++) {
+                        const index = Math.floor(i * (dataArray.length / spectrumLines.length));
+                        const rawValue = dataArray[index] / 255;
+                        const value = applySmoothing(rawValue * (sensitivity / 100), i);
+                        
+                        spectrumLines[i].style.height = `${value * 100}%`;
+                        spectrumLines[i].style.opacity = 0.5 + (value * 0.5);
+                        
+                        // Color variation based on frequency
+                        const hue = 200 + (i / spectrumLines.length * 160);
+                        spectrumLines[i].style.background = `linear-gradient(to top, hsl(${hue}, 80%, 60%), hsl(${hue + 20}, 80%, 60%))`;
+                    }
+                } 
+                else if (currentStyle === 'radial') {
+                    // Update radial bars
+                    const radialBars = document.querySelectorAll('.radial-bar');
+                    
+                    for (let i = 0; i < radialBars.length; i++) {
+                        const index = Math.floor(i * (dataArray.length / radialBars.length));
+                        const rawValue = dataArray[index] / 255;
+                        const value = applySmoothing(rawValue * (sensitivity / 100), i);
+                        
+                        radialBars[i].style.height = `${value * 50}px`;
+                        radialBars[i].style.opacity = 0.5 + (value * 0.5);
+                        
+                        // Color variation based on position
+                        const hue = 240 + (i / radialBars.length * 120);
+                        radialBars[i].style.background = `linear-gradient(to top, hsl(${hue}, 80%, 60%), hsl(${hue + 30}, 80%, 60%))`;
+                    }
+                }
+                
+                animationId = requestAnimationFrame(visualize);
+            }
+            
+            // Apply smoothing to values for less jittery animations
+            function applySmoothing(newValue, index) {
+                if (!lastValues[index]) {
+                    lastValues[index] = newValue;
+                    return newValue;
+                }
+                
+                // Apply smoothing based on the smoothness setting
+                const smoothedValue = lastValues[index] + (newValue - lastValues[index]) / smoothness;
+                lastValues[index] = smoothedValue;
+                return smoothedValue;
+            }
+            
+            // Instructions for the user
+            console.log('Click "Start Microphone" to begin visualizing your voice. Choose between different visualization styles.');
+        });
+    </script>
+</body>
+</html>
