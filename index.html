@@ -6,7 +6,8 @@
     <title>Sukkars' Static Tools | Sukkarshop.com</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
+    <style>
+       
         /* Base Styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,92 +18,140 @@
             padding: 0;
             min-height: 100vh;
         }
-        
+                
         .container {
             width: 90%;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px 0;
+            padding: 2rem 0;
         }
         
-        /* Header Styles */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
         }
         
         .logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            text-decoration: none;
+            height: 70px;
+            transition: transform 0.3s ease;
         }
         
-        .logo i {
-            font-size: 28px;
-            color: #3b82f6;
-            margin-right: 10px;
+        .logo:hover {
+            transform: scale(1.05);
         }
         
-        .logo span {
-            font-size: 20px;
-            font-weight: 600;
-            color: #4b5563;
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
         }
         
-        h1 {
-            font-size: 2.5rem;
-            color: #1f2937;
-            margin-bottom: 10px;
+        .title {
+            font-size: 2.25rem;
             font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
         
         .subtitle {
             font-size: 1.1rem;
-            color: #6b7280;
+            color: #64748b;
             max-width: 600px;
             margin: 0 auto;
+            font-weight: 400;
         }
-                       
-        /* Tools List View */
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 2.5rem;
+            margin-left: 5rem;
+        }
+        
+        .search-box {
+            width: 80%;
+            padding: 1rem 1.5rem 1rem 3rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            background-color: white;
+            color: #334155;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
         .tools-list {
-            display: none;
-            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 3rem;
         }
         
         .list-item {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
             display: flex;
             align-items: center;
-            padding: 15px 20px;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            width: 80%;
+            margin-left: 5rem;
         }
         
         .list-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            border-color: #bfdbfe;
+        }
+        
+        .list-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
         }
         
         .list-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
+            margin-right: 1.25rem;
             flex-shrink: 0;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
         }
         
         .list-icon i {
-            font-size: 18px;
+            font-size: 1.25rem;
+            color: #4f46e5;
         }
         
         .list-content {
@@ -110,163 +159,197 @@
         }
         
         .list-title {
-            font-size: 1.1rem;
+            font-size: 1.125rem;
             font-weight: 600;
-            margin: 0 0 5px 0;
-            color: #1f2937;
+            margin: 0 0 0.25rem 0;
+            color: #1e293b;
         }
         
         .list-desc {
-            color: #6b7280;
+            color: #64748b;
             margin: 0;
             font-size: 0.95rem;
+            line-height: 1.5;
         }
         
-        /* Footer */
+        .arrow-icon {
+            color: #94a3b8;
+            margin-left: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .list-item:hover .arrow-icon {
+            transform: translateX(3px);
+            color: #4f46e5;
+        }
+        
         footer {
             text-align: center;
-            padding: 30px 0;
-            border-top: 1px solid #e5e7eb;
-            color: #6b7280;
+            padding: 2rem 0 0;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+        
+        .copyright {
+            margin-bottom: 1rem;
         }
         
         .footer-links {
-            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
         
-        .footer-links a {
-            color: #3b82f6;
+        .footer-link {
+            color: #4f46e5;
             text-decoration: none;
-            margin: 0 10px;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
         }
         
-        .footer-links a:hover {
-            color: #2563eb;
+        .footer-link:hover {
+            color: #4338ca;
+            transform: translateY(-2px);
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
+        .footer-link i {
+            font-size: 0.9rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
-        <header>
+        <header class="header">
             <div class="logo-container">
                 <img src="https://sukkarshop.com/wp-content/uploads/2022/09/sukkarshop.png" alt="Sukkarshop Logo" class="logo">
             </div>
-            <h1>Sukkars' Static Tools</h1>
+            <h1 class="title">Sukkars' Static Tools</h1>
             <p class="subtitle">
-                A collection of handy online tools to make your work easier
+                A curated collection of essential online tools to streamline your workflow
             </p>
         </header>
 
         <!-- Search Box -->
-        <input type="text" id="searchInput" class="search-box" placeholder="Search tools..." onkeyup="searchTools()">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search tools by name or description..." onkeyup="searchTools()">
+        </div>
 
         <!-- Tools List View -->
         <div class="tools-list" id="toolsList">
             <!-- Tool 1 -->
             <a href="https://sukkars.github.io/base64-encoder-decoder/" class="list-item">
-                <div class="list-icon" style="background-color: #bfdbfe;">
+                <div class="list-icon">
                     <i class="fas fa-lock" style="color: #3b82f6;"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">Base64 Decoder/Encoder</h3>
-                    <p class="list-desc">Quickly encode or decode text and files to/from Base64 format.</p>
+                    <p class="list-desc">Quickly encode or decode text and files to/from Base64 format with our efficient tool.</p>
                 </div>
             </a>
 
             <!-- Tool 2 -->
             <a href="https://sukkars.github.io/whatsapp-link-gen.html" class="list-item">
-                <div class="list-icon" style="background-color: #d1fae5;">
+                <div class="list-icon">
                     <i class="fab fa-whatsapp" style="color: #10b981;"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">WhatsApp Link Generator</h3>
-                    <p class="list-desc">Create clickable WhatsApp message links with predefined text.</p>
+                    <p class="list-desc">Create clickable WhatsApp message links with predefined text for easy sharing.</p>
                 </div>
             </a>
 
             <!-- Tool 3 -->
             <a href="https://sukkars.github.io/visual-html-bbcode.html" class="list-item">
-                <div class="list-icon" style="background-color: #e9d5ff;">
+                <div class="list-icon">
                     <i class="fas fa-code" style="color: #8b5cf6;"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">HTML to BBCode Converter</h3>
-                    <p class="list-desc">Convert rich text or HTML to BBCode format for forums and boards.</p>
+                    <p class="list-desc">Convert rich text or HTML to BBCode format for forums and message boards.</p>
                 </div>
             </a>
 
             <!-- Tool 4 -->
             <a href="https://sukkars.github.io/sound-visualizer.html" class="list-item">
-                <div class="list-icon" style="background-color: #fee2e2;">
+                <div class="list-icon">
                     <i class="fas fa-music" style="color: #ef4444;"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">Sound Visualizer</h3>
-                    <p class="list-desc">Visualize your audio files with this interactive sound visualizer.</p>
+                    <p class="list-desc">Visualize your audio files with this interactive and responsive sound visualizer.</p>
                 </div>
             </a>
 
             <!-- Tool 5 -->
             <a href="https://sukkars.github.io/woo-csv-generator.html" class="list-item">
-                <div class="list-icon" style="background-color: #fef3c7;">
+                <div class="list-icon">
                     <i class="fas fa-file-csv" style="color: #f59e0b;"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">WooCommerce CSV Generator</h3>
-                    <p class="list-desc">Generate CSV files for bulk importing products to WooCommerce.</p>
+                    <p class="list-desc">Generate properly formatted CSV files for bulk importing products to WooCommerce.</p>
                 </div>
             </a>
 
             <!-- New Tool 6 -->
-            <a href="https://sukkarshop.com/sms/" class="list-item">
-                <div class="list-icon" style="background-color: #dbeafe;">
-                    <i class="fas fa-comment-sms" style="color: #1d4ed8;"></i>
+            <a href="#" class="list-item">
+                <div class="list-icon">
+                    <i class="fas fa-comment-sms"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">Personal Bulk SMS Assistant</h3>
-                    <p class="list-desc">Send personalized bulk SMS messages with ease and track responses using own phone.</p>
+                    <p class="list-desc">Send personalized bulk SMS messages with ease and track responses efficiently.</p>
                 </div>
             </a>
 
             <!-- New Tool 7 -->
-            <a href="https://tools.sukkarshop.com/" class="list-item">
-                <div class="list-icon" style="background-color: #ede9fe;">
-                    <i class="fas fa-tools" style="color: #7c3aed;"></i>
+            <a href="#" class="list-item">
+                <div class="list-icon">
+                    <i class="fas fa-tools"></i>
                 </div>
                 <div class="list-content">
                     <h3 class="list-title">More Online Tools</h3>
                     <p class="list-desc">Explore our complete collection of online utilities and productivity tools.</p>
-                </div>
+                </div>                
             </a>
+			
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" id="noResults">
+            <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+            <h3>No tools found</h3>
+            <p>Try adjusting your search query</p>
         </div>
 
         <!-- Footer -->
         <footer>
-            <p>© 2025 Sukkarshop.com - All rights reserved</p>
+            <p class="copyright">© 2025 Sukkarshop.com - All rights reserved</p>
             <div class="footer-links">
-                <a href="https://sukkarshop.com">
+                <a href="https://sukkarshop.com" class="footer-link">
                     <i class="fas fa-home"></i> Main Site
                 </a>
-                <a href="https://facebook.com/sukkar.shop">
+                <a href="https://facebook.com/sukkar.shop" class="footer-link">
                     <i class="fas fa-envelope"></i> Contact
                 </a>
-                <a href="https://sukkarshop.com/contact/">
+                <a href="https://sukkarshop.com/contact/" class="footer-link">
                     <i class="fas fa-info-circle"></i> About
                 </a>
             </div>
+			<br/>
         </footer>
     </div>
 
@@ -276,6 +359,9 @@
             const filter = input.value.toUpperCase();
             const list = document.getElementById('toolsList');
             const items = list.getElementsByClassName('list-item');
+            const noResults = document.getElementById('noResults');
+            
+            let visibleCount = 0;
 
             for (let i = 0; i < items.length; i++) {
                 const title = items[i].querySelector('.list-title').textContent;
@@ -283,10 +369,19 @@
                 const text = title + ' ' + desc;
                 
                 if (text.toUpperCase().indexOf(filter) > -1) {
-                    items[i].style.display = "";
+                    items[i].style.display = "flex";
+                    visibleCount++;
                 } else {
                     items[i].style.display = "none";
                 }
+            }
+
+            if (visibleCount === 0 && filter.length > 0) {
+                noResults.style.display = "block";
+                list.style.display = "none";
+            } else {
+                noResults.style.display = "none";
+                list.style.display = "grid";
             }
         }
     </script>
