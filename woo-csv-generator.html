@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WooCommerce Product Import CSV Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@preline/preline@2.0.0/dist/preline.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .variation-item {
+            transition: all 0.3s ease;
+        }
+        .variation-item:hover {
+            background-color: #f3f4f6;
+        }
+        .progress-bar {
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #10b981;
+            transition: width 0.3s ease;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: #10b981;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.error {
+            background-color: #ef4444;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">WooCommerce Product Import CSV Generator</h1>
+                <p class="text-gray-600 mt-1">Create CSV files for bulk importing products to WooCommerce</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    <i class="fas fa-box-open mr-1"></i>
+                    <span id="productCount">0</span> products
+                </span>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Product List</h2>
+                <button id="addProductBtn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Add Product
+                </button>
+            </div>
+            
+            <div id="productList" class="space-y-4">
+                <div class="text-center py-12 text-gray-500">
+                    <i class="fas fa-box-open text-4xl mb-2"></i>
+                    <p>No products added yet</p>
+                    <button id="addFirstProductBtn" class="mt-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Your First Product
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+            <button id="resetBtn" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                <i class="fas fa-trash-alt mr-2"></i>Reset All
+            </button>
+            <button id="generateBtn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors">
+                <i class="fas fa-file-csv mr-2"></i>Generate CSV
+            </button>
+        </div>
+    </div>
+    
+    <!-- Back to top button -->
+    <div id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4" id="modalTitle">Add New Product</h3>
+                    <div class="mt-2">
+                        <form id="productForm" class="space-y-4">
+                            <input type="hidden" id="productId">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="productType" class="block text-sm font-medium text-gray-700">Product Type</label>
+                                    <select id="productType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <option value="simple">Simple</option>
+                                        <option value="variable">Variable</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="sku" class="block text-sm font-medium text-gray-700">SKU</label>
+                                    <input type="text" id="sku" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="productName" class="block text-sm font-medium text-gray-700">Product Name*</label>
+                                <input type="text" id="productName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="shortDescription" class="block text-sm font-medium text-gray-700">Short Description</label>
+                                <textarea id="shortDescription" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea id="description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="regularPrice" class="block text-sm font-medium text-gray-700">Regular Price</label>
+                                    <input type="number" step="0.01" id="regularPrice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="salePrice" class="block text-sm font-medium text-gray-700">Sale Price</label>
+                                    <input type="number" step="0.01" id="salePrice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="stock" class="block text-sm font-medium text-gray-700">Stock Quantity</label>
+                                    <input type="number" id="stock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="weight" class="block text-sm font-medium text-gray-700">Weight (kg)</label>
+                                    <input type="number" step="0.01" id="weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="category" class="block text-sm font-medium text-gray-700">Category Slug</label>
+                                    <input type="text" id="category" placeholder="e.g. electronics" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <p class="text-xs text-gray-500 mt-1">Enter the category slug (e.g. electronics, clothing)</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="tags" class="block text-sm font-medium text-gray-700">Tags (comma separated)</label>
+                                <input type="text" id="tags" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
+                                <input type="text" id="imageUrl" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            
+                            <div id="variationsSection" class="hidden">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-medium text-gray-700">Weight Variations*</label>
+                                    <button type="button" id="addVariationBtn" class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                                        <i class="fas fa-plus mr-1"></i>Add Variation
+                                    </button>
+                                </div>
+                                <div id="variationsContainer" class="space-y-2">
+                                    <!-- Variation items will be added here -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="saveProductBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        Save Product
+                    </button>
+                    <button type="button" id="cancelProductBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Download Modal -->
+    <div id="csvModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-file-csv text-green-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="csvModalTitle">CSV Generated Successfully</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">Your WooCommerce compatible CSV file is ready to download.</p>
+                                <div class="mt-4">
+                                    <div class="progress-bar">
+                                        <div class="progress-bar-fill" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="downloadCsvBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        <i class="fas fa-download mr-2"></i>Download CSV
+                    </button>
+                    <button type="button" id="closeCsvModalBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toastMessage">Operation completed successfully</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Product data array
+            let products = [];
+            let currentProductId = 0;
+            let editingProductId = null;
+            let csvData = null;
+            
+            // DOM elements
+            const addProductBtn = document.getElementById('addProductBtn');
+            const addFirstProductBtn = document.getElementById('addFirstProductBtn');
+            const productList = document.getElementById('productList');
+            const productModal = document.getElementById('productModal');
+            const productForm = document.getElementById('productForm');
+            const saveProductBtn = document.getElementById('saveProductBtn');
+            const cancelProductBtn = document.getElementById('cancelProductBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const generateBtn = document.getElementById('generateBtn');
+            const productTypeSelect = document.getElementById('productType');
+            const variationsSection = document.getElementById('variationsSection');
+            const variationsContainer = document.getElementById('variationsContainer');
+            const addVariationBtn = document.getElementById('addVariationBtn');
+            const csvModal = document.getElementById('csvModal');
+            const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+            const closeCsvModalBtn = document.getElementById('closeCsvModalBtn');
+            const toast = document.getElementById('toast');
+            const productCount = document.getElementById('productCount');
+            const backToTop = document.getElementById('backToTop');
+            
+            // Event listeners
+            addProductBtn.addEventListener('click', openAddProductModal);
+            addFirstProductBtn.addEventListener('click', openAddProductModal);
+            saveProductBtn.addEventListener('click', saveProduct);
+            cancelProductBtn.addEventListener('click', closeModal);
+            resetBtn.addEventListener('click', resetAll);
+            generateBtn.addEventListener('click', generateCSV);
+            productTypeSelect.addEventListener('change', toggleVariationsSection);
+            addVariationBtn.addEventListener('click', addVariation);
+            downloadCsvBtn.addEventListener('click', downloadCSV);
+            closeCsvModalBtn.addEventListener('click', closeCsvModal);
+            
+            // Back to top button
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Functions
+            function openAddProductModal() {
+                editingProductId = null;
+                document.getElementById('modalTitle').textContent = 'Add New Product';
+                productForm.reset();
+                variationsContainer.innerHTML = '';
+                document.getElementById('productId').value = '';
+                productModal.classList.remove('hidden');
+            }
+            
+            function openEditProductModal(productId) {
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+                
+                editingProductId = productId;
+                document.getElementById('modalTitle').textContent = 'Edit Product';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productType').value = product.type;
+                document.getElementById('sku').value = product.sku || '';
+                document.getElementById('productName').value = product.name;
+                document.getElementById('shortDescription').value = product.shortDescription || '';
+                document.getElementById('description').value = product.description || '';
+                document.getElementById('regularPrice').value = product.regularPrice || '';
+                document.getElementById('salePrice').value = product.salePrice || '';
+                document.getElementById('stock').value = product.stock || '';
+                document.getElementById('weight').value = product.weight || '';
+                document.getElementById('category').value = product.category || '';
+                document.getElementById('tags').value = product.tags || '';
+                document.getElementById('imageUrl').value = product.imageUrl || '';
+                
+                // Handle variations
+                variationsContainer.innerHTML = '';
+                if (product.type === 'variable' && product.variations && product.variations.length > 0) {
+                    product.variations.forEach(variation => {
+                        addVariation(variation.weight, variation.price);
+                    });
+                }
+                
+                toggleVariationsSection();
+                productModal.classList.remove('hidden');
+            }
+            
+            function closeModal() {
+                productModal.classList.add('hidden');
+            }
+            
+            function closeCsvModal() {
+                csvModal.classList.add('hidden');
+            }
+            
+            function toggleVariationsSection() {
+                if (productTypeSelect.value === 'variable') {
+                    variationsSection.classList.remove('hidden');
+                } else {
+                    variationsSection.classList.add('hidden');
+                }
+            }
+            
+            function addVariation(weight = '', price = '') {
+                const variationId = Date.now();
+                const variationItem = document.createElement('div');
+                variationItem.className = 'variation-item p-3 border rounded-md';
+                variationItem.dataset.id = variationId;
+                variationItem.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500">Weight (kg)*</label>
+                            <input type="number" step="0.01" class="variation-weight w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="${weight}" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500">Price*</label>
+                            <input type="number" step="0.01" class="variation-price w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="${price}" required>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-end">
+                        <button type="button" class="remove-variation text-xs text-red-500 hover:text-red-700 transition-colors">
+                            <i class="fas fa-trash mr-1"></i>Remove
+                        </button>
+                    </div>
+                `;
+                variationsContainer.appendChild(variationItem);
+                
+                // Add event listener to remove button
+                variationItem.querySelector('.remove-variation').addEventListener('click', function() {
+                    variationsContainer.removeChild(variationItem);
+                });
+            }
+            
+            function saveProduct() {
+                const productId = document.getElementById('productId').value;
+                const productType = document.getElementById('productType').value;
+                const sku = document.getElementById('sku').value;
+                const productName = document.getElementById('productName').value;
+                const shortDescription = document.getElementById('shortDescription').value;
+                const description = document.getElementById('description').value;
+                const regularPrice = document.getElementById('regularPrice').value;
+                const salePrice = document.getElementById('salePrice').value;
+                const stock = document.getElementById('stock').value;
+                const weight = document.getElementById('weight').value;
+                const category = document.getElementById('category').value;
+                const tags = document.getElementById('tags').value;
+                const imageUrl = document.getElementById('imageUrl').value;
+                
+                // Collect variations if product is variable
+                let variations = [];
+                if (productType === 'variable') {
+                    const variationItems = variationsContainer.querySelectorAll('.variation-item');
+                    variationItems.forEach(item => {
+                        const weight = item.querySelector('.variation-weight').value;
+                        const price = item.querySelector('.variation-price').value;
+                        if (weight && price) {
+                            variations.push({
+                                weight: weight,
+                                price: price
+                            });
+                        }
+                    });
+                }
+                
+                // Validate required fields
+                if (!productName) {
+                    showToast('Product name is required', true);
+                    return;
+                }
+                
+                if (productType === 'variable' && variations.length === 0) {
+                    showToast('Please add at least one weight variation for variable products', true);
+                    return;
+                }
+                
+                // Create or update product
+                const productData = {
+                    id: productId || ++currentProductId,
+                    type: productType,
+                    sku: sku,
+                    name: productName,
+                    shortDescription: shortDescription,
+                    description: description,
+                    regularPrice: regularPrice,
+                    salePrice: salePrice,
+                    stock: stock,
+                    weight: weight,
+                    category: category,
+                    tags: tags,
+                    imageUrl: imageUrl,
+                    variations: variations
+                };
+                
+                if (editingProductId !== null) {
+                    // Update existing product
+                    const index = products.findIndex(p => p.id === editingProductId);
+                    if (index !== -1) {
+                        products[index] = productData;
+                        showToast('Product updated successfully');
+                    }
+                } else {
+                    // Add new product
+                    products.push(productData);
+                    showToast('Product added successfully');
+                }
+                
+                renderProductList();
+                closeModal();
+            }
+            
+            function renderProductList() {
+                productList.innerHTML = '';
+                
+                if (products.length === 0) {
+                    productList.innerHTML = `
+                        <div class="text-center py-12 text-gray-500">
+                            <i class="fas fa-box-open text-4xl mb-2"></i>
+                            <p>No products added yet</p>
+                            <button id="addFirstProductBtn" class="mt-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Your First Product
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Re-add event listener for the new button
+                    document.getElementById('addFirstProductBtn').addEventListener('click', openAddProductModal);
+                    
+                    productCount.textContent = '0';
+                    return;
+                }
+                
+                productCount.textContent = products.length;
+                
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow border-gray-200';
+                    productCard.innerHTML = `
+                        <div class="p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-medium text-gray-900">${product.name}</h3>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        ${product.type === 'simple' ? 'Simple Product' : 'Variable Product'}
+                                        ${product.sku ? `• SKU: ${product.sku}` : ''}
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="edit-product p-1 text-blue-500 hover:text-blue-700 transition-colors" data-id="${product.id}" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="duplicate-product p-1 text-purple-500 hover:text-purple-700 transition-colors" data-id="${product.id}" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="delete-product p-1 text-red-500 hover:text-red-700 transition-colors" data-id="${product.id}" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ${product.type === 'variable' ? `
+                            <div class="mt-3">
+                                <p class="text-xs font-medium text-gray-500">Weight Variations:</p>
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    ${product.variations.map(v => `
+                                        <span class="text-xs bg-gray-100 px-2 py-1 rounded">${v.weight}kg (${v.price}৳)</span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${product.regularPrice ? `
+                            <div class="mt-2">
+                                <span class="text-sm font-medium">Price: ${product.regularPrice}৳</span>
+                                ${product.salePrice ? `<span class="text-sm text-gray-500 ml-2 line-through">${product.salePrice}৳</span>` : ''}
+                            </div>
+                            ` : ''}
+                            ${product.category ? `
+                            <div class="mt-2">
+                                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Category: ${product.category}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    productList.appendChild(productCard);
+                });
+                
+                // Add event listeners to edit, duplicate and delete buttons
+                document.querySelectorAll('.edit-product').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        openEditProductModal(parseInt(this.dataset.id));
+                    });
+                });
+                
+                document.querySelectorAll('.duplicate-product').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        duplicateProduct(parseInt(this.dataset.id));
+                    });
+                });
+                
+                document.querySelectorAll('.delete-product').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        deleteProduct(parseInt(this.dataset.id));
+                    });
+                });
+            }
+            
+            function duplicateProduct(productId) {
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+                
+                // Create a deep copy of the product
+                const productCopy = JSON.parse(JSON.stringify(product));
+                productCopy.id = ++currentProductId;
+                productCopy.name = `${productCopy.name} (Copy)`;
+                
+                // Add the duplicated product
+                products.push(productCopy);
+                renderProductList();
+                showToast('Product duplicated successfully');
+            }
+            
+            function deleteProduct(productId) {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    products = products.filter(p => p.id !== productId);
+                    renderProductList();
+                    showToast('Product deleted successfully');
+                }
+            }
+            
+            function resetAll() {
+                if (products.length === 0 || confirm('Are you sure you want to reset all products? This cannot be undone.')) {
+                    products = [];
+                    currentProductId = 0;
+                    renderProductList();
+                    showToast('All products have been reset');
+                }
+            }
+            
+            function generateCSV() {
+                if (products.length === 0) {
+                    showToast('No products to generate CSV', true);
+                    return;
+                }
+                
+                // Prepare CSV data
+                const csvRows = [];
+                
+                // Add header row
+                const headers = [
+                    'ID', 'Type', 'SKU', 'Name', 'Published', 'Is featured?', 'Visibility in catalog', 
+                    'Short description', 'Description', 'Date sale price starts', 'Date sale price ends', 
+                    'Tax status', 'Tax class', 'In stock?', 'Stock', 'Backorders', 'Sold individually?', 
+                    'Weight (kg)', 'Length (cm)', 'Width (cm)', 'Height (cm)', 'Allow customer reviews?', 
+                    'Purchase note', 'Sale price', 'Regular price', 'Categories', 'Tags', 'Shipping class', 
+                    'Images', 'Download limit', 'Download expiry days', 'Parent', 'Grouped products', 
+                    'Upsells', 'Cross-sells', 'External URL', 'Button text', 'Position', 'Attribute 1 name', 
+                    'Attribute 1 value(s)', 'Attribute 1 visible', 'Attribute 1 global', 'Attribute 2 name', 
+                    'Attribute 2 value(s)', 'Attribute 2 visible', 'Attribute 2 global', 'Meta: _wpcom_is_markdown', 
+                    'Download 1 name', 'Download 1 URL', 'Download 2 name', 'Download 2 URL'
+                ];
+                
+                csvRows.push(headers);
+                
+                // Add product rows
+                products.forEach(product => {
+                    if (product.type === 'simple') {
+                        // Simple product
+                        const row = [
+                            '', // ID
+                            'simple', // Type
+                            product.sku || '', // SKU
+                            product.name, // Name
+                            '1', // Published
+                            '0', // Is featured?
+                            'visible', // Visibility in catalog
+                            product.shortDescription || '', // Short description
+                            product.description || '', // Description
+                            '', // Date sale price starts
+                            '', // Date sale price ends
+                            'taxable', // Tax status
+                            '', // Tax class
+                            product.stock ? '1' : '0', // In stock?
+                            product.stock || '', // Stock
+                            '0', // Backorders
+                            '0', // Sold individually?
+                            product.weight || '', // Weight (kg)
+                            '', // Length (cm)
+                            '', // Width (cm)
+                            '', // Height (cm)
+                            '1', // Allow customer reviews?
+                            '', // Purchase note
+                            product.salePrice || '', // Sale price
+                            product.regularPrice || '', // Regular price
+                            product.category ? `${product.category}:${product.category}` : '', // Categories
+                            product.tags || '', // Tags
+                            '', // Shipping class
+                            product.imageUrl || '', // Images
+                            '', // Download limit
+                            '', // Download expiry days
+                            '', // Parent
+                            '', // Grouped products
+                            '', // Upsells
+                            '', // Cross-sells
+                            '', // External URL
+                            '', // Button text
+                            '0', // Position
+                            '', // Attribute 1 name
+                            '', // Attribute 1 value(s)
+                            '0', // Attribute 1 visible
+                            '0', // Attribute 1 global
+                            '', // Attribute 2 name
+                            '', // Attribute 2 value(s)
+                            '0', // Attribute 2 visible
+                            '0', // Attribute 2 global
+                            '0', // Meta: _wpcom_is_markdown
+                            '', // Download 1 name
+                            '', // Download 1 URL
+                            '', // Download 2 name
+                            '', // Download 2 URL
+                        ];
+                        
+                        csvRows.push(row);
+                    } else if (product.type === 'variable') {
+                        // Variable product - first add the parent product
+                        const parentRow = [
+                            '', // ID
+                            'variable', // Type
+                            product.sku || '', // SKU
+                            product.name, // Name
+                            '1', // Published
+                            '0', // Is featured?
+                            'visible', // Visibility in catalog
+                            product.shortDescription || '', // Short description
+                            product.description || '', // Description
+                            '', // Date sale price starts
+                            '', // Date sale price ends
+                            'taxable', // Tax status
+                            '', // Tax class
+                            '1', // In stock?
+                            '', // Stock
+                            '0', // Backorders
+                            '0', // Sold individually?
+                            '', // Weight (kg)
+                            '', // Length (cm)
+                            '', // Width (cm)
+                            '', // Height (cm)
+                            '1', // Allow customer reviews?
+                            '', // Purchase note
+                            '', // Sale price
+                            '', // Regular price
+                            product.category ? `${product.category}:${product.category}` : '', // Categories
+                            product.tags || '', // Tags
+                            '', // Shipping class
+                            product.imageUrl || '', // Images
+                            '', // Download limit
+                            '', // Download expiry days
+                            '', // Parent
+                            '', // Grouped products
+                            '', // Upsells
+                            '', // Cross-sells
+                            '', // External URL
+                            '', // Button text
+                            '0', // Position
+                            'Weight', // Attribute 1 name
+                            product.variations.map(v => v.weight).join('|'), // Attribute 1 value(s)
+                            '1', // Attribute 1 visible
+                            '1', // Attribute 1 global
+                            '', // Attribute 2 name
+                            '', // Attribute 2 value(s)
+                            '0', // Attribute 2 visible
+                            '0', // Attribute 2 global
+                            '0', // Meta: _wpcom_is_markdown
+                            '', // Download 1 name
+                            '', // Download 1 URL
+                            '', // Download 2 name
+                            '', // Download 2 URL
+                        ];
+                        
+                        csvRows.push(parentRow);
+                        
+                        // Then add each variation
+                        product.variations.forEach((variation, index) => {
+                            const variationRow = [
+                                '', // ID
+                                'variation', // Type
+                                product.sku ? `${product.sku}-${index + 1}` : '', // SKU
+                                `${product.name} (${variation.weight}kg)`, // Name
+                                '1', // Published
+                                '0', // Is featured?
+                                'visible', // Visibility in catalog
+                                '', // Short description
+                                '', // Description
+                                '', // Date sale price starts
+                                '', // Date sale price ends
+                                'taxable', // Tax status
+                                '', // Tax class
+                                '1', // In stock?
+                                '', // Stock
+                                '0', // Backorders
+                                '0', // Sold individually?
+                                variation.weight, // Weight (kg)
+                                '', // Length (cm)
+                                '', // Width (cm)
+                                '', // Height (cm)
+                                '1', // Allow customer reviews?
+                                '', // Purchase note
+                                '', // Sale price
+                                variation.price, // Regular price
+                                '', // Categories
+                                '', // Tags
+                                '', // Shipping class
+                                '', // Images
+                                '', // Download limit
+                                '', // Download expiry days
+                                product.name, // Parent
+                                '', // Grouped products
+                                '', // Upsells
+                                '', // Cross-sells
+                                '', // External URL
+                                '', // Button text
+                                '0', // Position
+                                'Weight', // Attribute 1 name
+                                variation.weight, // Attribute 1 value(s)
+                                '1', // Attribute 1 visible
+                                '1', // Attribute 1 global
+                                '', // Attribute 2 name
+                                '', // Attribute 2 value(s)
+                                '0', // Attribute 2 visible
+                                '0', // Attribute 2 global
+                                '0', // Meta: _wpcom_is_markdown
+                                '', // Download 1 name
+                                '', // Download 1 URL
+                                '', // Download 2 name
+                                '', // Download 2 URL
+                            ];
+                            
+                            csvRows.push(variationRow);
+                        });
+                    }
+                });
+                
+                // Convert to CSV string
+                csvData = Papa.unparse(csvRows);
+                
+                // Show CSV download modal
+                csvModal.classList.remove('hidden');
+            }
+            
+            function downloadCSV() {
+                if (!csvData) return;
+                
+                const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'woocommerce_products_import.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast('CSV downloaded successfully');
+                closeCsvModal();
+            }
+            
+            function showToast(message, isError = false) {
+                const toastMessage = document.getElementById('toastMessage');
+                toastMessage.textContent = message;
+                
+                if (isError) {
+                    toast.classList.add('error');
+                } else {
+                    toast.classList.remove('error');
+                }
+                
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Initialize
+            renderProductList();
+        });
+    </script>
+    <footer class="text-center text-gray-500 text-sm mt-8">
+        <p>WC Product CSV Generator App | Created by <a href="https://github.com/almahmudbd/" target="_blank" class="text-blue-500 hover:text-blue-700">almahmud</a></p>
+    </footer>
+</body>
+</html>
