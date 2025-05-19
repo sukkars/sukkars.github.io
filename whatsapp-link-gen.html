@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Link Generator | SukkarShop</title>
+  <base target="_self">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .whatsapp-bg {
+      background-color: #25D366;
+    }
+    .whatsapp-bg:hover {
+      background-color: #128C7E;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-800">
+  <div class="container mx-auto px-4 py-8 max-w-2xl">
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">WhatsApp Link Generator</h1>
+      <p class="text-gray-600 dark:text-gray-300 mb-6">Generate a WhatsApp link to start a chat without saving the number to your contacts.</p>
+      
+      <div class="mb-4">
+        <label for="number-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Enter WhatsApp number:</label>
+        <div class="flex">
+          <input 
+            type="tel" 
+            id="number-input" 
+            class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-white" 
+            placeholder="8801234567890"
+            pattern="[0-9]+"
+            required
+          >
+          <button 
+            onclick="generateLink()" 
+            class="whatsapp-bg text-white px-4 py-2 rounded-r-lg hover:bg-green-600 transition-colors"
+          >
+            Generate Link
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Enter number with country code (e.g. 880 for Bangladesh)</p>
+      </div>
+      
+      <div id="result" class="mt-6 p-4 bg-gray-50 dark:bg-gray-600 rounded-lg fade-in hidden">
+        <div id="result-content" class="flex items-center space-x-2"></div>
+      </div>
+      
+      <div class="mt-8 bg-blue-50 dark:bg-gray-600 p-4 rounded-lg">
+        <h3 class="font-semibold text-blue-800 dark:text-blue-300 mb-2">Important Notes:</h3>
+        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+          <li>✓ Include country code (e.g. 880 for Bangladesh)</li>
+          <li>✓ Do not use "+" at the beginning</li>
+          <li>✓ No spaces or special characters (like "-") in the number</li>
+          <li>✓ Example format: 8801234567890</li>
+        </ul>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-4">
+          This tool helps you to send a message on WhatsApp without saving the number to your contact list.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generateLink() {
+      const number = document.getElementById("number-input").value.trim();
+      const resultDiv = document.getElementById("result");
+      const resultContent = document.getElementById("result-content");
+      
+      // Validate input
+      if (!number) {
+        alert("Please enter a phone number");
+        return;
+      }
+      
+      if (!/^\d+$/.test(number)) {
+        alert("Please enter only numbers (no spaces or special characters)");
+        return;
+      }
+      
+      // Create the WhatsApp link
+      const whatsappLink = `https://wa.me/${number}`;
+      
+      // Display the result
+      resultContent.innerHTML = `
+        <i class="fab fa-whatsapp text-3xl text-green-500"></i>
+        <div>
+          <p class="text-gray-700 dark:text-gray-300"><b>Click this link to start chatting:</b></p>
+          <a href="${whatsappLink}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${whatsappLink}</a>
+        </div>
+      `;
+      
+      resultDiv.classList.remove("hidden");
+      resultDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Allow pressing Enter to generate link
+    document.getElementById("number-input").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        generateLink();
+      }
+    });
+  </script>
+</body>
+</html>
