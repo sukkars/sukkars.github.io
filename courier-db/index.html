@@ -1,135 +1,236 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Data Viewer</title>
+    <title>Courier Data Viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .loading {
-            display: none;
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
         }
-        .loading-spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
+        
+        .spinner {
             width: 50px;
             height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3b82f6;
+            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
         .table-container {
-            max-height: 70vh;
+            max-height: 65vh;
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f1f1f1;
         }
+        
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 10px;
+        }
+        
+        .highlight {
+            background-color: #ffeb3b;
+            font-weight: bold;
+        }
+        
         @media (max-width: 768px) {
-            .table-container {
-                max-height: 60vh;
+            .responsive-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-container button {
+                margin-top: 0.5rem;
+                width: 100%;
             }
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-        </div>
-        
-        <h1 class="text-2xl font-bold mb-4">CSV Data Viewer</h1>
-        
-        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-            <div class="flex flex-col space-y-4">
-                <div class="flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">CSV File URL</label>
-                        <input type="text" id="csvUrl" placeholder="Enter CSV URL (e.g., /cr-list.db)" 
-                               value="/cr-list.db"
-                               class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <button id="loadCsv" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 self-end md:self-auto">
-                        Load CSV
+<body class="bg-gray-50">
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="mt-4 text-gray-700 font-medium">Loading courier data...</p>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Courier Information System</h1>
+                    <p class="text-gray-600 mt-2">View and search courier branch details</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <button id="exportBtn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors hidden">
+                        <i class="fas fa-file-export mr-2"></i>Export Data
                     </button>
+                </div>
+            </div>
+            
+            <!-- Control Panel -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
+                        <div class="flex">
+                            <input type="text" id="csvUrl" value="cr-list.db" 
+                                   class="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   placeholder="Enter CSV file path">
+                            <button id="loadCsv" class="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-sync-alt mr-2"></i>Load
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Search Data</label>
+                        <div class="flex search-container" id="searchContainer">
+                            <input type="text" id="searchInput" placeholder="Search by courier, branch, address or number..." 
+                                   class="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   disabled>
+                            <button id="clearSearch" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-md hover:bg-gray-300 transition-colors" disabled>
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="flex items-center">
-                    <input type="text" id="searchInput" placeholder="Search by any keyword..." 
-                           class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="clearSearch" class="ml-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                        Clear
-                    </button>
+                <div class="mt-4 flex flex-wrap items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-sm text-gray-500">
+                            <span id="visibleRowCount">0</span> of <span id="totalRowCount">0</span> records
+                        </div>
+                        <div id="searchStats" class="text-sm text-blue-600 hidden">
+                            <i class="fas fa-search mr-1"></i>
+                            <span id="matchCount">0</span> matches found
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2 md:mt-0">
+                        <button id="resetFilters" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors hidden">
+                            <i class="fas fa-undo mr-1"></i>Reset Filters
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="table-container">
-                <table id="dataTable" class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 sticky top-0">
-                        <tr id="tableHeader" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <!-- Headers will be populated by JavaScript -->
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Data will be populated by JavaScript -->
-                    </tbody>
-                </table>
+            
+            <!-- Data Table -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="table-container">
+                    <table id="dataTable" class="min-w-full divide-y divide-gray-200 responsive-table">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr id="tableHeader">
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Serial
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Courier
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Branch
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Address
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Number
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                    No data loaded. Please load a CSV file.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        
-        <div class="mt-4 text-sm text-gray-500">
-            <p>Showing <span id="visibleRowCount">0</span> of <span id="totalRowCount">0</span> records</p>
+            
+            <!-- Footer -->
+            <div class="mt-6 text-center text-sm text-gray-500">
+                <p>Courier Information System &copy; 2023 | Loaded from: <span id="sourceFile" class="font-mono">none</span></p>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const loadingOverlay = document.getElementById('loadingOverlay');
             const csvUrl = document.getElementById('csvUrl');
             const loadCsv = document.getElementById('loadCsv');
             const searchInput = document.getElementById('searchInput');
             const clearSearch = document.getElementById('clearSearch');
+            const resetFilters = document.getElementById('resetFilters');
+            const exportBtn = document.getElementById('exportBtn');
             const tableHeader = document.getElementById('tableHeader');
             const tableBody = document.getElementById('tableBody');
             const visibleRowCount = document.getElementById('visibleRowCount');
             const totalRowCount = document.getElementById('totalRowCount');
-            const loading = document.getElementById('loading');
+            const matchCount = document.getElementById('matchCount');
+            const searchStats = document.getElementById('searchStats');
+            const sourceFile = document.getElementById('sourceFile');
             
+            // Data storage
             let allData = [];
-            let headers = [];
+            let filteredData = [];
+            const headers = ['serial', 'courier', 'branch', 'address', 'number'];
             
-            // Show loading spinner
-            const showLoading = () => {
-                loading.style.display = 'flex';
-            };
+            // Show loading overlay
+            function showLoading() {
+                loadingOverlay.classList.remove('hidden');
+            }
             
-            // Hide loading spinner
-            const hideLoading = () => {
-                loading.style.display = 'none';
-            };
+            // Hide loading overlay
+            function hideLoading() {
+                loadingOverlay.classList.add('hidden');
+            }
             
             // Parse CSV data
-            const parseCSV = (csvText) => {
+            function parseCSV(csvText) {
                 const lines = csvText.split('\n');
-                if (lines.length === 0) return { headers: [], data: [] };
+                if (lines.length === 0) return [];
                 
                 // Detect delimiter (comma or tab)
                 const firstLine = lines[0];
                 const delimiter = firstLine.includes('\t') ? '\t' : ',';
-                
-                // Extract headers
-                headers = lines[0].split(delimiter).map(h => h.trim());
                 
                 // Process data rows
                 const data = [];
@@ -137,7 +238,7 @@
                     if (lines[i].trim() === '') continue;
                     
                     const row = lines[i].split(delimiter).map(cell => {
-                        // Remove quotes if present
+                        // Remove quotes if present and trim whitespace
                         let value = cell.trim();
                         if (value.startsWith('"') && value.endsWith('"')) {
                             value = value.substring(1, value.length - 1);
@@ -147,37 +248,56 @@
                     
                     // Ensure row has same number of columns as headers
                     if (row.length === headers.length) {
-                        data.push(row);
+                        // Create an object with named properties for easier access
+                        const rowObj = {};
+                        headers.forEach((header, index) => {
+                            rowObj[header] = row[index] || '';
+                        });
+                        data.push(rowObj);
                     }
                 }
                 
-                return { headers, data };
-            };
+                return data;
+            }
             
             // Display data in table
-            const displayData = (headerRow, data) => {
+            function displayData(data) {
                 // Clear existing data
-                tableHeader.innerHTML = '';
                 tableBody.innerHTML = '';
                 
-                // Create header row
-                headerRow.forEach(header => {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    th.className = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
-                    tableHeader.appendChild(th);
-                });
+                if (data.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                No data available.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
                 
                 // Create data rows
-                data.forEach((row, rowIndex) => {
+                data.forEach((row, index) => {
                     const tr = document.createElement('tr');
-                    tr.className = rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                    tr.className = index % 2 === 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100';
                     tr.dataset.rowData = JSON.stringify(row);
                     
-                    row.forEach(cell => {
+                    // Add click event for potential row actions
+                    tr.addEventListener('click', function() {
+                        // You could add row selection functionality here
+                    });
+                    
+                    // Create cells for each column
+                    headers.forEach(header => {
                         const td = document.createElement('td');
-                        td.textContent = cell !== undefined && cell !== null ? cell : '';
                         td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+                        
+                        // Make certain columns more prominent
+                        if (header === 'courier' || header === 'branch') {
+                            td.className += ' font-medium text-gray-900';
+                        }
+                        
+                        td.textContent = row[header] || 'N/A';
                         tr.appendChild(td);
                     });
                     
@@ -185,42 +305,113 @@
                 });
                 
                 // Update row counts
-                totalRowCount.textContent = data.length;
+                totalRowCount.textContent = allData.length;
                 visibleRowCount.textContent = data.length;
-            };
+                
+                // Show export button
+                exportBtn.classList.remove('hidden');
+            }
             
             // Filter data based on search term
-            const filterData = (searchTerm) => {
-                searchTerm = searchTerm.toLowerCase();
+            function filterData(searchTerm) {
+                searchTerm = searchTerm.toLowerCase().trim();
                 
                 if (!searchTerm) {
                     // Show all rows if search is empty
-                    document.querySelectorAll('#tableBody tr').forEach(tr => {
-                        tr.style.display = '';
-                    });
-                    visibleRowCount.textContent = allData.length;
+                    displayData(allData);
+                    searchStats.classList.add('hidden');
+                    resetFilters.classList.add('hidden');
                     return;
                 }
                 
-                let visibleCount = 0;
-                
-                document.querySelectorAll('#tableBody tr').forEach(tr => {
-                    const rowData = JSON.parse(tr.dataset.rowData);
-                    const rowText = rowData.join(' ').toLowerCase();
-                    
-                    if (rowText.includes(searchTerm)) {
-                        tr.style.display = '';
-                        visibleCount++;
-                    } else {
-                        tr.style.display = 'none';
-                    }
+                // Filter the data
+                filteredData = allData.filter(row => {
+                    // Check all columns for the search term
+                    return headers.some(header => {
+                        const cellValue = String(row[header] || '').toLowerCase();
+                        return cellValue.includes(searchTerm);
+                    });
                 });
                 
-                visibleRowCount.textContent = visibleCount;
-            };
+                // Display filtered data
+                displayData(filteredData);
+                
+                // Highlight search terms in the table
+                highlightSearchTerms(searchTerm);
+                
+                // Update search stats
+                matchCount.textContent = filteredData.length;
+                searchStats.classList.remove('hidden');
+                resetFilters.classList.remove('hidden');
+            }
+            
+            // Highlight search terms in the table
+            function highlightSearchTerms(searchTerm) {
+                const rows = tableBody.querySelectorAll('tr');
+                const regex = new RegExp(searchTerm, 'gi');
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    
+                    cells.forEach(cell => {
+                        const originalText = cell.textContent;
+                        const highlightedText = originalText.replace(regex, match => 
+                            `<span class="highlight">${match}</span>`
+                        );
+                        
+                        if (highlightedText !== originalText) {
+                            cell.innerHTML = highlightedText;
+                        }
+                    });
+                });
+            }
+            
+            // Reset all filters and search
+            function resetAllFilters() {
+                searchInput.value = '';
+                displayData(allData);
+                searchStats.classList.add('hidden');
+                resetFilters.classList.add('hidden');
+            }
+            
+            // Export data to CSV
+            function exportToCSV() {
+                const dataToExport = filteredData.length > 0 ? filteredData : allData;
+                
+                if (dataToExport.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                
+                // Create CSV content
+                let csvContent = headers.join(',') + '\n';
+                
+                dataToExport.forEach(row => {
+                    const rowValues = headers.map(header => {
+                        // Escape quotes and wrap in quotes if contains comma
+                        let value = row[header] || '';
+                        if (value.includes(',')) {
+                            value = `"${value.replace(/"/g, '""')}"`;
+                        }
+                        return value;
+                    });
+                    csvContent += rowValues.join(',') + '\n';
+                });
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `courier_data_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
             
             // Load CSV from URL
-            const loadCSVFromURL = async (url) => {
+            async function loadCSVFromURL(url) {
                 showLoading();
                 
                 try {
@@ -231,10 +422,10 @@
                     }
                     
                     const csvText = await response.text();
-                    const { headers, data } = parseCSV(csvText);
+                    allData = parseCSV(csvText);
                     
-                    allData = data;
-                    displayData(headers, data);
+                    displayData(allData);
+                    sourceFile.textContent = url;
                     
                     // Enable search
                     searchInput.disabled = false;
@@ -245,16 +436,24 @@
                     console.error('Error loading CSV:', error);
                     alert('Error loading CSV file. Please check the URL and try again.');
                     hideLoading();
+                    
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-red-500">
+                                Error loading data. Please check the file path and try again.
+                            </td>
+                        </tr>
+                    `;
                 }
-            };
+            }
             
-            // Event listeners
+            // Event Listeners
             loadCsv.addEventListener('click', () => {
                 const url = csvUrl.value.trim();
                 if (url) {
                     loadCSVFromURL(url);
                 } else {
-                    alert('Please enter a valid CSV URL');
+                    alert('Please enter a valid CSV file path');
                 }
             });
             
@@ -264,14 +463,32 @@
             
             clearSearch.addEventListener('click', () => {
                 searchInput.value = '';
-                filterData('');
+                resetAllFilters();
                 searchInput.focus();
             });
+            
+            resetFilters.addEventListener('click', resetAllFilters);
+            
+            exportBtn.addEventListener('click', exportToCSV);
             
             // Load default CSV if URL is pre-filled
             if (csvUrl.value.trim()) {
                 loadCSVFromURL(csvUrl.value.trim());
             }
+            
+            // Enable pressing Enter in the URL input to load data
+            csvUrl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadCsv.click();
+                }
+            });
+            
+            // Enable pressing Enter in the search input to filter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterData(searchInput.value);
+                }
+            });
         });
     </script>
 </body>
