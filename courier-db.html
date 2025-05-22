@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Courier Data Viewer</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+            <div class="flex items-center">
+                <input type="text" id="searchInput" placeholder="Search by any keyword..." 
+                       class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="clearSearch" class="ml-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+                    Clear
+                </button>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table id="dataTable" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr id="tableHeader" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <!-- Headers will be populated by JavaScript -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-sm text-gray-500">
+            <p>Showing <span id="visibleRows">0</span> of <span id="totalRows">0</span> records</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const clearSearch = document.getElementById('clearSearch');
+            const tableHeader = document.getElementById('tableHeader');
+            const tableBody = document.getElementById('tableBody');
+            const visibleRowsSpan = document.getElementById('visibleRows');
+            const totalRowsSpan = document.getElementById('totalRows');
+            
+            let allData = [];
+            let headers = [];
+            
+            // Load Excel file from URL
+            const loadExcelData = async () => {
+                try {
+                    const response = await fetch('https://sukkarshop.com/wp-content/uploads/2023/12/all-courier-db-25-12-2023.xlsx');
+                    const arrayBuffer = await response.arrayBuffer();
+                    const data = new Uint8Array(arrayBuffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get first sheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Convert to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    // Extract headers (first row)
+                    headers = jsonData[0];
+                    
+                    // Extract data (remaining rows)
+                    allData = jsonData.slice(1);
+                    
+                    // Display data
+                    displayData(headers, allData);
+                    
+                } catch (error) {
+                    console.error('Error loading Excel file:', error);
+                    alert('Error loading data. Please try again later.');
+                }
+            };
+            
+            // Display data in table
+            const displayData = (headers, data) => {
+                // Clear existing data
+                tableHeader.innerHTML = '';
+                tableBody.innerHTML = '';
+                
+                // Create header row
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    th.className = 'px-6 py-3';
+                    tableHeader.appendChild(th);
+                });
+                
+                // Create data rows
+                data.forEach((row, rowIndex) => {
+                    const tr = document.createElement('tr');
+                    tr.className = rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                    tr.dataset.rowData = JSON.stringify(row);
+                    
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell !== undefined ? cell : '';
+                        td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+                        tr.appendChild(td);
+                    });
+                    
+                    tableBody.appendChild(tr);
+                });
+                
+                // Update row counts
+                totalRowsSpan.textContent = data.length;
+                visibleRowsSpan.textContent = data.length;
+            };
+            
+            // Filter data based on search term
+            const filterData = (searchTerm) => {
+                searchTerm = searchTerm.toLowerCase();
+                
+                if (!searchTerm) {
+                    // Show all rows if search is empty
+                    document.querySelectorAll('#tableBody tr').forEach(tr => {
+                        tr.style.display = '';
+                    });
+                    visibleRowsSpan.textContent = allData.length;
+                    return;
+                }
+                
+                let visibleCount = 0;
+                
+                document.querySelectorAll('#tableBody tr').forEach(tr => {
+                    const rowData = JSON.parse(tr.dataset.rowData);
+                    const rowText = rowData.join(' ').toLowerCase();
+                    
+                    if (rowText.includes(searchTerm)) {
+                        tr.style.display = '';
+                        visibleCount++;
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                });
+                
+                visibleRowsSpan.textContent = visibleCount;
+            };
+            
+            // Event listeners
+            searchInput.addEventListener('input', () => {
+                filterData(searchInput.value);
+            });
+            
+            clearSearch.addEventListener('click', () => {
+                searchInput.value = '';
+                filterData('');
+            });
+            
+            // Load data when page loads
+            loadExcelData();
+        });
+    </script>
+</body>
+</html>
