@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sukkars' Static Tools | Sukkarshop.com</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-       
-        /* Base Styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -18,34 +15,28 @@
             padding: 0;
             min-height: 100vh;
         }
-                
         .container {
             width: 90%;
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem 0;
         }
-        
         .logo-container {
             display: flex;
             justify-content: center;
             margin-bottom: 1.5rem;
         }
-        
         .logo {
             height: 70px;
             transition: transform 0.3s ease;
         }
-        
         .logo:hover {
             transform: scale(1.05);
         }
-        
         .header {
             text-align: center;
             margin-bottom: 2.5rem;
         }
-        
         .title {
             font-size: 2.25rem;
             font-weight: 700;
@@ -56,7 +47,6 @@
             -webkit-text-fill-color: transparent;
             display: inline-block;
         }
-        
         .subtitle {
             font-size: 1.1rem;
             color: #64748b;
@@ -64,13 +54,10 @@
             margin: 0 auto;
             font-weight: 400;
         }
-        
-	.search-container {
- 	position: relative;
-	margin-bottom: 2.5rem;
- 	   /* margin-left: 5rem;  // এই লাইন বাদ  */
-	}
-        
+        .search-container {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
         .search-box {
             width: 80%;
             padding: 1rem 1.5rem 1rem 3rem;
@@ -82,13 +69,11 @@
             background-color: white;
             color: #334155;
         }
-        
         .search-box:focus {
             outline: none;
             border-color: #93c5fd;
             box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
         }
-        
         .search-icon {
             position: absolute;
             left: 1.25rem;
@@ -96,37 +81,35 @@
             transform: translateY(-50%);
             color: #94a3b8;
         }
-        
-	.tools-list {
-	 display: grid;
- 	 grid-template-columns: 1fr;
- 	 gap: 1rem;
- 	 margin-bottom: 3rem;
-	}
-        
+        .tools-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            justify-items: center;
+        }
         .list-item {
-	    background: white;
-	    border-radius: 12px;
-	    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-	    transition: all 0.3s ease;
-	    text-decoration: none;
-	    color: inherit;
-	    display: flex;
-	    align-items: center;
-	    padding: 1.25rem;
-	    border: 1px solid #e2e8f0;
-	    position: relative;
-	    overflow: hidden;
-	    width: 100%;           /* 80% এর বদলে 100% দিন */
-	    margin-left: 0;        /* margin-left: 5rem; বাদ দিন */
-	}
-        
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            width: 80%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
         .list-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
             border-color: #bfdbfe;
         }
-        
         .list-item::before {
             content: '';
             position: absolute;
@@ -136,7 +119,6 @@
             width: 4px;
             background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
         }
-        
         .list-icon {
             width: 48px;
             height: 48px;
@@ -148,59 +130,49 @@
             flex-shrink: 0;
             background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
         }
-        
         .list-icon i {
             font-size: 1.25rem;
             color: #4f46e5;
         }
-        
         .list-content {
             flex-grow: 1;
         }
-        
         .list-title {
             font-size: 1.125rem;
             font-weight: 600;
             margin: 0 0 0.25rem 0;
             color: #1e293b;
         }
-        
         .list-desc {
             color: #64748b;
             margin: 0;
             font-size: 0.95rem;
             line-height: 1.5;
         }
-        
         .arrow-icon {
             color: #94a3b8;
             margin-left: 1rem;
             transition: transform 0.3s ease;
         }
-        
         .list-item:hover .arrow-icon {
             transform: translateX(3px);
             color: #4f46e5;
         }
-        
         footer {
             text-align: center;
             padding: 2rem 0 0;
             border-top: 1px solid #e2e8f0;
             color: #64748b;
         }
-        
         .copyright {
             margin-bottom: 1rem;
         }
-        
         .footer-links {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
-        
         .footer-link {
             color: #4f46e5;
             text-decoration: none;
@@ -210,21 +182,27 @@
             gap: 0.5rem;
             transition: all 0.3s ease;
         }
-        
         .footer-link:hover {
             color: #4338ca;
             transform: translateY(-2px);
         }
-        
         .footer-link i {
             font-size: 0.9rem;
         }
-        
         .no-results {
             text-align: center;
             padding: 2rem;
             color: #64748b;
             display: none;
+        }
+        @media (max-width: 600px) {
+            .list-item, .search-box {
+                width: 100%;
+                max-width: unset;
+            }
+            .container {
+                padding: 1rem 0;
+            }
         }
     </style>
 </head>
@@ -304,7 +282,7 @@
                 </div>
             </a>
 
-            <!-- New Tool 6 -->
+            <!-- Tool 6 -->
             <a href="#" class="list-item">
                 <div class="list-icon">
                     <i class="fas fa-comment-sms"></i>
@@ -315,7 +293,7 @@
                 </div>
             </a>
 
-            <!-- New Tool 7 -->
+            <!-- Tool 7 -->
             <a href="#" class="list-item">
                 <div class="list-icon">
                     <i class="fas fa-tools"></i>
@@ -323,9 +301,8 @@
                 <div class="list-content">
                     <h3 class="list-title">More Online Tools</h3>
                     <p class="list-desc">Explore our complete collection of online utilities and productivity tools.</p>
-                </div>                
+                </div>
             </a>
-			
         </div>
 
         <!-- No Results Message -->
@@ -337,7 +314,9 @@
 
         <!-- Footer -->
         <footer>
-            <p class="copyright">© 2025 Sukkarshop.com - All rights reserved</p>
+            <p class="copyright">
+                © 2025 Sukkarshop.com - All rights reserved
+            </p>
             <div class="footer-links">
                 <a href="https://sukkarshop.com" class="footer-link">
                     <i class="fas fa-home"></i> Main Site
@@ -349,10 +328,9 @@
                     <i class="fas fa-info-circle"></i> About
                 </a>
             </div>
-			<br/>
+            <br/>
         </footer>
     </div>
-
     <script>
         function searchTools() {
             const input = document.getElementById('searchInput');
@@ -360,14 +338,12 @@
             const list = document.getElementById('toolsList');
             const items = list.getElementsByClassName('list-item');
             const noResults = document.getElementById('noResults');
-            
             let visibleCount = 0;
 
             for (let i = 0; i < items.length; i++) {
                 const title = items[i].querySelector('.list-title').textContent;
                 const desc = items[i].querySelector('.list-desc').textContent;
                 const text = title + ' ' + desc;
-                
                 if (text.toUpperCase().indexOf(filter) > -1) {
                     items[i].style.display = "flex";
                     visibleCount++;
@@ -375,7 +351,6 @@
                     items[i].style.display = "none";
                 }
             }
-
             if (visibleCount === 0 && filter.length > 0) {
                 noResults.style.display = "block";
                 list.style.display = "none";
