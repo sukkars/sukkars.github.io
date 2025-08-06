@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Animation for new notes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        /* Custom checkbox */
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4ade80;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .custom-checkbox:checked {
+            background-color: #4ade80;
+        }
+        
+        .custom-checkbox:checked::after {
+            content: '\2713';
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-green-600 mb-2">Fresh Notes by sukkar</h1>
+            <p class="text-gray-600">Your thoughts, organized beautifully</p>
+        </header>
+        
+        <!-- Disclaimer Section -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border-l-4 border-green-400">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 text-green-500 text-xl mr-3 mt-1">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Welcome to Fresh Notes!</h2>
+                    <p class="text-gray-600 mb-3">
+                        This is a simple, clean note-taking app. All notes are saved in your browser's local storage, 
+                        so they'll persist between sessions but won't sync across devices.
+                    </p>
+                    <p class="text-gray-600">
+                        <strong>Tip:</strong> Click on any note to edit it. Check the box to mark as complete.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Note Input -->
+        <div class="flex mb-6 gap-2">
+            <input 
+                type="text" 
+                id="newNoteInput" 
+                placeholder="Add a new note..." 
+                class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            >
+            <button 
+                id="addNoteBtn" 
+                class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
+            >
+                <i class="fas fa-plus mr-2"></i> Add
+            </button>
+        </div>
+        
+        <!-- Filter Controls -->
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-sm text-gray-500">
+                <span id="noteCount">0</span> notes
+            </div>
+            <div class="flex space-x-2">
+                <button 
+                    id="filterAll" 
+                    class="filter-btn px-3 py-1 rounded-md bg-green-500 text-white text-sm"
+                >
+                    All
+                </button>
+                <button 
+                    id="filterActive" 
+                    class="filter-btn px-3 py-1 rounded-md bg-gray-200 text-gray-700 text-sm hover:bg-gray-300"
+                >
+                    Active
+                </button>
+                <button 
+                    id="filterCompleted" 
+                    class="filter-btn px-3 py-1 rounded-md bg-gray-200 text-gray-700 text-sm hover:bg-gray-300"
+                >
+                    Completed
+                </button>
+            </div>
+        </div>
+        
+        <!-- Notes List -->
+        <div id="notesContainer" class="space-y-3">
+            <!-- Notes will be added here dynamically -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-10 hidden">
+            <i class="fas fa-sticky-note text-4xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl text-gray-500 font-medium">No notes yet</h3>
+            <p class="text-gray-400">Add your first note above to get started!</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const newNoteInput = document.getElementById('newNoteInput');
+            const addNoteBtn = document.getElementById('addNoteBtn');
+            const notesContainer = document.getElementById('notesContainer');
+            const emptyState = document.getElementById('emptyState');
+            const noteCount = document.getElementById('noteCount');
+            const filterAll = document.getElementById('filterAll');
+            const filterActive = document.getElementById('filterActive');
+            const filterCompleted = document.getElementById('filterCompleted');
+            
+            let notes = JSON.parse(localStorage.getItem('notes')) || [];
+            let currentFilter = 'all';
+            
+            // Initialize the app
+            function init() {
+                renderNotes();
+                updateNoteCount();
+                checkEmptyState();
+                
+                // Set up event listeners
+                addNoteBtn.addEventListener('click', addNote);
+                newNoteInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addNote();
+                    }
+                });
+                
+                filterAll.addEventListener('click', () => setFilter('all'));
+                filterActive.addEventListener('click', () => setFilter('active'));
+                filterCompleted.addEventListener('click', () => setFilter('completed'));
+            }
+            
+            // Add a new note
+            function addNote() {
+                const noteText = newNoteInput.value.trim();
+                if (noteText) {
+                    const newNote = {
+                        id: Date.now(),
+                        text: noteText,
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    notes.unshift(newNote);
+                    saveNotes();
+                    renderNotes();
+                    newNoteInput.value = '';
+                    updateNoteCount();
+                    checkEmptyState();
+                }
+            }
+            
+            // Render notes based on current filter
+            function renderNotes() {
+                notesContainer.innerHTML = '';
+                
+                const filteredNotes = notes.filter(note => {
+                    if (currentFilter === 'active') return !note.completed;
+                    if (currentFilter === 'completed') return note.completed;
+                    return true;
+                });
+                
+                if (filteredNotes.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    
+                    filteredNotes.forEach(note => {
+                        const noteElement = createNoteElement(note);
+                        notesContainer.appendChild(noteElement);
+                        // Add fade-in animation for new notes
+                        if (note.id > Date.now() - 1000) {
+                            noteElement.classList.add('fade-in');
+                        }
+                    });
+                }
+            }
+            
+            // Create a note DOM element
+            function createNoteElement(note) {
+                const noteEl = document.createElement('div');
+                noteEl.className = `bg-white rounded-lg shadow-sm p-4 flex items-start border border-gray-100 hover:shadow-md transition-shadow ${note.completed ? 'opacity-70' : ''}`;
+                noteEl.dataset.id = note.id;
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'custom-checkbox mr-3 mt-1';
+                checkbox.checked = note.completed;
+                checkbox.addEventListener('change', () => toggleNoteComplete(note.id));
+                
+                const noteContent = document.createElement('div');
+                noteContent.className = 'flex-grow';
+                
+                const noteText = document.createElement('div');
+                noteText.className = `text-gray-800 mb-1 ${note.completed ? 'line-through' : ''}`;
+                noteText.textContent = note.text;
+                noteText.addEventListener('click', () => editNote(note.id));
+                
+                const noteDate = document.createElement('div');
+                noteDate.className = 'text-xs text-gray-400';
+                noteDate.textContent = formatDate(note.createdAt);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'ml-2 text-gray-400 hover:text-red-500 transition-colors';
+                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteNote(note.id);
+                });
+                
+                noteContent.appendChild(noteText);
+                noteContent.appendChild(noteDate);
+                
+                noteEl.appendChild(checkbox);
+                noteEl.appendChild(noteContent);
+                noteEl.appendChild(deleteBtn);
+                
+                return noteEl;
+            }
+            
+            // Toggle note completion status
+            function toggleNoteComplete(id) {
+                notes = notes.map(note => 
+                    note.id === id ? {...note, completed: !note.completed} : note
+                );
+                saveNotes();
+                renderNotes();
+                updateNoteCount();
+            }
+            
+            // Edit note text
+            function editNote(id) {
+                const note = notes.find(n => n.id === id);
+                if (!note) return;
+                
+                const noteElement = document.querySelector(`[data-id="${id}"]`);
+                const noteTextElement = noteElement.querySelector('div > div:first-child');
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = note.text;
+                input.className = 'w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-400';
+                
+                noteTextElement.replaceWith(input);
+                input.focus();
+                
+                function saveEdit() {
+                    const newText = input.value.trim();
+                    if (newText && newText !== note.text) {
+                        note.text = newText;
+                        saveNotes();
+                    }
+                    renderNotes();
+                }
+                
+                input.addEventListener('blur', saveEdit);
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        saveEdit();
+                    }
+                });
+            }
+            
+            // Delete a note
+            function deleteNote(id) {
+                notes = notes.filter(note => note.id !== id);
+                saveNotes();
+                renderNotes();
+                updateNoteCount();
+                checkEmptyState();
+            }
+            
+            // Set current filter
+            function setFilter(filter) {
+                currentFilter = filter;
+                
+                // Update active filter button styles
+                [filterAll, filterActive, filterCompleted].forEach(btn => {
+                    btn.classList.remove('bg-green-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                });
+                
+                switch(filter) {
+                    case 'all':
+                        filterAll.classList.add('bg-green-500', 'text-white');
+                        filterAll.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                        break;
+                    case 'active':
+                        filterActive.classList.add('bg-green-500', 'text-white');
+                        filterActive.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                        break;
+                    case 'completed':
+                        filterCompleted.classList.add('bg-green-500', 'text-white');
+                        filterCompleted.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                        break;
+                }
+                
+                renderNotes();
+            }
+            
+            // Save notes to localStorage
+            function saveNotes() {
+                localStorage.setItem('notes', JSON.stringify(notes));
+            }
+            
+            // Update the note count display
+            function updateNoteCount() {
+                const total = notes.length;
+                const completed = notes.filter(n => n.completed).length;
+                const active = total - completed;
+                
+                noteCount.textContent = `${active} active, ${completed} completed - ${total} total`;
+            }
+            
+            // Show/hide empty state
+            function checkEmptyState() {
+                if (notes.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+            }
+            
+            // Format date for display
+            function formatDate(isoString) {
+                const date = new Date(isoString);
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+            
+            // Initialize the app
+            init();
+        });
+    </script>
+</body>
+</html>
