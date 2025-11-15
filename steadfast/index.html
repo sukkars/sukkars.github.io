@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steadfast Easy Booking Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS - Modern & Clean Theme */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
+            background-color: #f7f7f7; 
+        }
+
+        .modern-card {
+            max-width: 960px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px; 
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            border-color: #10b981;
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); 
+        }
+
+        .button-primary {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .button-primary:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .button-secondary {
+            background: #ffffff;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .button-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        .status-success { color: #059669; font-weight: 600; }
+        .status-error { color: #ef4444; font-weight: 600; }
+
+        /* Custom alert message box styling */
+        .custom-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        /* মেইন ফর্মকে ডিসেবল করা */
+        #mainFormSection.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* ৩. API রেসপন্স কন্টেইনারের h6 স্টাইল আপডেট (Poppins/20px) */
+        #response h6 {
+            font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
+            font-size: 20px; 
+            line-height: 1.5;
+            font-weight: 600; 
+            color: #1a202c;
+            margin: 10px 0;
+            padding: 12px;
+            background-color: #f7f7f7;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .copyable-text {
+            flex-grow: 1;
+            margin-right: 1rem;
+            word-break: break-all;
+            font-family: 'Inter', monospace; /* Ensure IDs look like system data */
+            font-weight: 700;
+        }
+        
+        /* Key Management Status Bar */
+        .key-status-container {
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease-in-out;
+        }
+        .key-status-success { background-color: #d1fae5; color: #059669; border: 1px solid #34d399; font-size: 0.5rem; }
+        .key-status-error { background-color: #fee2e2; color: #ef4444; border: 1px solid #f87171; }
+    </style>
+</head>
+<body>
+
+    <div class="modern-card">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Steadfast কাস্টম বুকিং টুল</h1>
+        
+        <!-- ১. API কী কনফিগারেশন -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">১. Steadfast API কী সেটআপ</h2>
+            
+            <!-- Compact Status Bar -->
+            <div id="keyStatusContainer" class="key-status-container key-status-error mb-4">
+                <span id="keyStatusText" class="font-semibold text-lg"></span>
+                <button id="toggleKeyDetailsBtn" class="text-sm font-medium underline"></button>
+            </div>
+            
+            <!-- Collapsible Input Details -->
+            <div id="keyDetailsContent" class="hidden p-5 border border-gray-200 rounded-xl bg-white shadow-inner">
+                <div class="space-y-4">
+                    <div>
+                        <label for="inputApiKey" class="block text-sm font-medium text-gray-700">API Key:</label>
+                        <input type="text" id="inputApiKey" class="mt-1 w-full" placeholder="আপনার API Key">
+                    </div>
+
+                    <div>
+                        <label for="inputSecretKey" class="block text-sm font-medium text-gray-700">Secret Key:</label>
+                        <input type="text" id="inputSecretKey" class="mt-1 w-full" placeholder="আপনার SecreT Key">
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-2">
+                        <button id="saveKeysBtn" class="flex-1 button-primary">
+                            কী সেভ করুন
+                        </button>
+                        <button id="clearKeysBtn" class="flex-1 button-secondary">
+                            মুছে ফেলুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning message (kept brief) -->
+            <div class="text-sm text-gray-600 mt-2">
+                <span class="text-red-500 font-medium">⚠️ সতর্কতা:</span> নিরাপত্তা বিবেচনা করে কীগুলি ব্রাউজারের লোকাল স্টোরেজে সেভ করা হচ্ছে।
+            </div>
+        </div>
+
+        <!-- ২. অর্ডারের তথ্য -->
+        <div id="mainFormSection" class="disabled">
+            <h2 class="text-xl font-semibold text-gray-700 mb-5 border-b pb-3">২. অর্ডার ডেটা প্রসেস করুন</h2>
+            
+            <!-- মেসেজ ইনপুট -->
+            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <label for="messageInput" class="block text-base font-medium text-gray-800 mb-2">কাস্টমার ডেটা মেসেজ পেস্ট করুন (৪ বা ৩ লাইন):</label>
+                <textarea id="messageInput" class="w-full text-base" rows="4" placeholder="Ahmad Abdullah
+House-10, Boshundhara R/A, Rajshahi.
+01312278792
+100tk (অথবা শুধু 100 বা ফাঁকা)"></textarea>
+                <button id="processMessageBtn" class="mt-3 button-primary">
+                    মেসেজ প্রসেস করে ফর্মে নিয়ে আসুন
+                </button>
+            </div>
+
+            <!-- ফর্ম যাচাইকরণ -->
+            <form id="orderForm" class="space-y-6 p-6 border border-gray-300 rounded-xl bg-gray-50 shadow-sm">
+                <p class="text-red-600 font-medium hidden" id="parseError">মেসেজের প্যাটার্ন ঠিক নেই বা ডেটা অসম্পূর্ণ।</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="invoice" class="block text-sm font-medium text-gray-700">ইনভয়েস আইডি (স্বয়ংক্রিয়ভাবে তৈরি):</label>
+                        <input type="text" id="invoice" class="mt-1 w-full bg-gray-100" readonly>
+                    </div>
+
+                    <div>
+                        <label for="cod_amount" class="block text-sm font-medium text-gray-700">COD অ্যামাউন্ট (BDT):</label>
+                        <input type="number" id="cod_amount" min="0" class="mt-1 w-full" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="recipient_name" class="block text-sm font-medium text-gray-700">গ্রহীতার নাম:</label>
+                    <input type="text" id="recipient_name" class="mt-1 w-full" required>
+                </div>
+                
+                <div>
+                    <label for="recipient_address" class="block text-sm font-medium text-gray-700">গ্রহীতার ঠিকানা:</label>
+                    <input type="text" id="recipient_address" class="mt-1 w-full" required>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="recipient_phone" class="block text-sm font-medium text-gray-700">গ্রহীতার ফোন:</label>
+                        <input type="text" id="recipient_phone" class="mt-1 w-full" required>
+                    </div>
+                    
+                    <div>
+                        <label for="delivery_type" class="block text-sm font-medium text-gray-700">ডেলিভারি ধরন:</label>
+                        <select id="delivery_type" class="mt-1 w-full">
+                            <option value="0">0 = হোম ডেলিভারি</option>
+                            <option value="1">1 = পয়েন্ট ডেলিভারি / হাব পিকআপ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="item_description" class="block text-sm font-medium text-gray-700">পণ্যের বিবরণ (ঐচ্ছিক):</label>
+                    <input type="text" id="item_description" class="mt-1 w-full">
+                </div>
+
+                <div>
+                    <label for="note" class="block text-sm font-medium text-gray-700">নোট (ঐচ্ছিক):</label>
+                    <input type="text" id="note" class="mt-1 w-full">
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" id="confirmBookingBtn" disabled class="w-full button-primary disabled:opacity-50">
+                        বুকিং কনফার্ম করুন
+                    </button>
+                </div>
+            </form>
+
+            <!-- ৩. API রেসপন্স -->
+            <div class="mt-8 p-6 border border-gray-200 rounded-xl bg-white shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">৩. API রেসপন্স</h2>
+                <div id="response" class="response-container p-3 bg-white min-h-[60px]">
+                    <p class="text-gray-500">এখানে বুকিং সফল বা ব্যর্থ হওয়ার বার্তা দেখা যাবে...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONSTANTS ---
+        const STEADFAST_URL = 'https://portal.packzy.com/api/v1/create_order';
+        const TRACKING_BASE_URL = 'https://steadfast.com.bd/t/';
+        const STEADFAST_API_LINK = 'https://steadfast.com.bd/user/api'; // New Link Constant
+        const LS_API_KEY = 'steadfastApiKey';
+        const LS_SECRET_KEY = 'steadfastSecretKey';
+
+        // --- Global Variables for Keys ---
+        let API_KEY = null;
+        let SECRET_KEY = null;
+
+        // --- DOM Element References ---
+        const mainFormSection = document.getElementById('mainFormSection');
+        
+        // Key Status Elements (New)
+        const keyStatusContainer = document.getElementById('keyStatusContainer');
+        const keyStatusText = document.getElementById('keyStatusText');
+        const toggleKeyDetailsBtn = document.getElementById('toggleKeyDetailsBtn');
+        const keyDetailsContent = document.getElementById('keyDetailsContent');
+
+        // Key Input Elements
+        const inputApiKey = document.getElementById('inputApiKey');
+        const inputSecretKey = document.getElementById('inputSecretKey');
+        const saveKeysBtn = document.getElementById('saveKeysBtn');
+        const clearKeysBtn = document.getElementById('clearKeysBtn');
+        
+        // Form Elements
+        const messageInput = document.getElementById('messageInput');
+        const processMessageBtn = document.getElementById('processMessageBtn');
+        const orderForm = document.getElementById('orderForm');
+        const invoiceInput = document.getElementById('invoice');
+        const nameInput = document.getElementById('recipient_name');
+        const addressInput = document.getElementById('recipient_address');
+        const phoneInput = document.getElementById('recipient_phone');
+        const codAmountInput = document.getElementById('cod_amount');
+        const deliveryTypeSelect = document.getElementById('delivery_type');
+        const itemDescriptionInput = document.getElementById('item_description');
+        const noteInput = document.getElementById('note');
+        const confirmBookingBtn = document.getElementById('confirmBookingBtn');
+        const responseDiv = document.getElementById('response');
+        const parseErrorDiv = document.getElementById('parseError');
+        
+        // --- Utility Functions ---
+
+        /**
+         * Shows a custom alert message instead of the browser's native alert.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success' or 'error'.
+         * @param {number} duration - Time in ms to display the alert.
+         */
+        function showCustomAlert(message, type = 'error', duration = 3000) {
+            const existingAlert = document.querySelector('.custom-alert');
+            if (existingAlert) existingAlert.remove();
+
+            const alertBox = document.createElement('div');
+            alertBox.textContent = message;
+            alertBox.classList.add('custom-alert');
+            
+            if (type === 'success') {
+                alertBox.style.backgroundColor = '#10b981'; /* Teal success */
+                alertBox.style.color = 'white';
+            } else {
+                alertBox.style.backgroundColor = '#ef4444'; /* Red error */
+                alertBox.style.color = 'white';
+            }
+
+            document.body.appendChild(alertBox);
+            setTimeout(() => {
+                alertBox.remove();
+            }, duration);
+        }
+
+        /**
+         * Handles the copy-to-clipboard functionality.
+         * @param {string} text - The text content to copy.
+         * @param {HTMLElement} element - The button element that was clicked.
+         */
+        function copyToClipboard(text, element) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed'; 
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalText = element.textContent;
+                element.textContent = 'Copied!'; // English label for copy success
+                element.classList.add('bg-green-500');
+                element.classList.remove('button-secondary');
+                setTimeout(() => {
+                    element.textContent = originalText;
+                    element.classList.remove('bg-green-500');
+                    element.classList.add('button-secondary');
+                }, 1500);
+            } catch (err) {
+                console.error('Copy failed:', err);
+                showCustomAlert("Copy failed.", 'error');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+        
+        // Global function to allow copying data from response section
+        window.copyResponseData = function(element, dataToCopy) {
+            // Encode the string to handle special characters (like #) passed via onclick attribute
+            const decodedText = decodeURIComponent(dataToCopy);
+            copyToClipboard(decodedText, element);
+        };
+
+        /**
+         * Cleans a string to contain only standard 0-9 digits and converts Bengali digits.
+         */
+        function cleanNumberString(str) {
+            if (!str) return '';
+            
+            let cleaned = str.replace(/[^\d০-৯]/g, '');
+
+            const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+            for (let i = 0; i < bengaliDigits.length; i++) {
+                const regex = new RegExp(bengaliDigits[i], 'g');
+                cleaned = cleaned.replace(regex, englishDigits[i]);
+            }
+            
+            return cleaned;
+        }
+
+        /**
+         * Parses the order message to extract name, address, phone, and COD.
+         */
+        function parseOrderMessage(message) {
+            const lines = message.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+            if (lines.length < 3) {
+                return null; 
+            }
+            
+            const phoneValidator = /^01\d{9}$/; 
+            const recipient_name = lines[0];
+            let recipient_phone = null;
+            let recipient_address = null;
+            
+            const cleanedLine1 = cleanNumberString(lines[1]);
+            const cleanedLine2 = cleanNumberString(lines[2]);
+
+            // Determine phone and address based on pattern matching
+            if (phoneValidator.test(cleanedLine1)) {
+                // Format B: Name, Phone, Address (less common, but handled)
+                recipient_phone = cleanedLine1;
+                recipient_address = lines[2]; 
+            } else if (phoneValidator.test(cleanedLine2)) {
+                // Format A: Name, Address, Phone (most common)
+                recipient_phone = cleanedLine2;
+                recipient_address = lines[1]; 
+            } else {
+                // No valid phone number found
+                return null;
+            }
+
+            if (!recipient_phone || !recipient_address) {
+                return null;
+            }
+
+            let cod_amount = 0; 
+            
+            // Check for COD amount (optional line 3/4)
+            if (lines.length >= 4) {
+                const codLine = cleanNumberString(lines[3].replace(/tk|টাকা/gi, ''));
+                const parsedCod = parseFloat(codLine);
+                if (!isNaN(parsedCod)) {
+                    cod_amount = parsedCod;
+                }
+            } else if (lines.length === 3) {
+                cod_amount = 0;
+            }
+
+            return {
+                recipient_name: recipient_name,
+                recipient_address: recipient_address,
+                recipient_phone: recipient_phone,
+                cod_amount: cod_amount,
+            };
+        }
+
+
+        // --- Key Management Logic ---
+        
+        /**
+         * Loads API keys from localStorage and updates the global variables and UI.
+         */
+        function loadKeys() {
+            API_KEY = localStorage.getItem(LS_API_KEY);
+            SECRET_KEY = localStorage.getItem(LS_SECRET_KEY);
+            updateUIBasedOnKeys();
+        }
+
+        /**
+         * Saves API keys to localStorage.
+         */
+        function saveKeys() {
+            const key = inputApiKey.value.trim();
+            const secret = inputSecretKey.value.trim();
+
+            if (key && secret) {
+                localStorage.setItem(LS_API_KEY, key);
+                localStorage.setItem(LS_SECRET_KEY, secret);
+                showCustomAlert("API কী সফলভাবে সেভ করা হয়েছে।", 'success');
+                loadKeys(); // Re-load and update UI
+                keyDetailsContent.classList.add('hidden'); // Hide details after saving
+                toggleKeyDetailsBtn.textContent = 'পরিবর্তন করুন'; 
+            } else {
+                showCustomAlert("API কী এবং সিক্রেট কী উভয়ই দিতে হবে।", 'error');
+            }
+        }
+
+        /**
+         * Clears API keys from localStorage.
+         */
+        function clearKeys() {
+            localStorage.removeItem(LS_API_KEY);
+            localStorage.removeItem(LS_SECRET_KEY);
+            showCustomAlert("সেভ করা API কী মুছে ফেলা হয়েছে।", 'success');
+            loadKeys(); // Re-load and update UI
+            inputApiKey.value = '';
+            inputSecretKey.value = '';
+        }
+
+        /**
+         * Toggles the visibility of the key input section.
+         */
+        function toggleKeyDetails() {
+            keyDetailsContent.classList.toggle('hidden');
+            const isHidden = keyDetailsContent.classList.contains('hidden');
+            if (isHidden) {
+                toggleKeyDetailsBtn.textContent = 'পরিবর্তন করুন';
+            } else {
+                toggleKeyDetailsBtn.textContent = 'লুকান';
+            }
+        }
+
+        /**
+         * Updates the UI based on whether the API keys are present and handles minimalism.
+         */
+        function updateUIBasedOnKeys() {
+            const hasKeys = API_KEY && SECRET_KEY;
+            
+            // 1. Update Status Bar Container
+            keyStatusContainer.classList.remove('key-status-success', 'key-status-error');
+            
+            if (hasKeys) {
+                keyStatusContainer.classList.add('key-status-success');
+                // Updated concise message (Point 1)
+                keyStatusText.innerHTML = '✅ API কী লোড হয়েছে।';
+                mainFormSection.classList.remove('disabled');
+                
+                // Set input values to hidden text in the background
+                inputApiKey.value = '********** (সেভ করা আছে)';
+                inputSecretKey.value = '********** (সেভ করা আছে)';
+                inputApiKey.readOnly = true;
+                inputSecretKey.readOnly = true;
+                
+                // Keep details hidden by default
+                keyDetailsContent.classList.add('hidden');
+                toggleKeyDetailsBtn.textContent = 'পরিবর্তন করুন';
+            } else {
+                keyStatusContainer.classList.add('key-status-error');
+                // Updated message with link
+                keyStatusText.innerHTML = `
+                    ❌ API কী সেভ করা নেই। দয়া করে <a href="${STEADFAST_API_LINK}" target="_blank" class="font-bold underline hover:text-red-700">এই লিঙ্কে</a> গিয়ে কী ইনপুট দিন।
+                `;
+                mainFormSection.classList.add('disabled');
+
+                // Clear fields if needed
+                if (inputApiKey.readOnly) inputApiKey.value = '';
+                if (inputSecretKey.readOnly) inputSecretKey.value = '';
+                inputApiKey.readOnly = false;
+                inputSecretKey.readOnly = false;
+
+                // Show details when keys are missing
+                keyDetailsContent.classList.remove('hidden');
+                toggleKeyDetailsBtn.textContent = 'লুকান'; // Since it's shown
+            }
+        }
+
+
+        // --- API Call Logic ---
+
+        /**
+         * Calls the Steadfast API directly from the client.
+         */
+        async function createOrder(orderData) {
+            if (!API_KEY || !SECRET_KEY) {
+                showCustomAlert("বুকিং করার আগে API কী কনফিগার করুন।", 'error', 5000);
+                responseDiv.innerHTML = `<p class="text-red-500">API কী পাওয়া যায়নি।</p>`;
+                return;
+            }
+
+            responseDiv.innerHTML = `<p class="text-blue-600 font-semibold">বুকিং প্রক্রিয়া চলছে... (API কল হচ্ছে)</p>`;
+            
+            try {
+                const response = await fetch(STEADFAST_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Api-Key': API_KEY, // Use loaded key
+                        'Secret-Key': SECRET_KEY, // Use loaded secret
+                    },
+                    body: JSON.stringify(orderData),
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.status === 200) {
+                    const cid = result.consignment.consignment_id;
+                    const trackingCode = result.consignment.tracking_code;
+                    const trackingLink = TRACKING_BASE_URL + trackingCode;
+
+                    // Text for display
+                    const displayParcelId = `#${cid}`;
+                    const displayTrackingLink = trackingLink;
+
+                    // Text for copying (Point 2 change: include label for Parcel ID)
+                    const copyParcelId = `Parcel ID: ${displayParcelId}`; 
+                    const copyTrackingLink = trackingLink; 
+
+                    // Ensure copy strings are URI encoded to safely pass through onclick attribute
+                    const encodedCopyParcelId = encodeURIComponent(copyParcelId);
+                    const encodedCopyTrackingLink = encodeURIComponent(copyTrackingLink);
+                    
+                    // Updated success response UI (Point 1)
+                    responseDiv.innerHTML = `
+                        <p class="status-success text-xl mb-4 border-b pb-2">Booking Successful!</p>
+                        
+                        <h6>
+                            <span class="font-bold text-gray-700">Parcel ID: </span> 
+                            <span class="copyable-text"> ${displayParcelId}</span>
+                            <button class="button-secondary p-1.5" onclick="copyResponseData(this, '${encodedCopyParcelId}')">Copy</button>
+                        </h6>
+                        <h6>
+                            <span class="font-bold text-gray-700">Tracking Link: </span>
+                            <span class="copyable-text">${displayTrackingLink}</span>
+                            <a href="${displayTrackingLink}" target="_blank" class="button-secondary p-1.5 ml-2">View</a>
+                            <button class="button-secondary p-1.5" onclick="copyResponseData(this, '${encodedCopyTrackingLink}')">Copy</button>
+                        </h6>
+
+                        <hr class="my-3 border-gray-200">
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-gray-600 font-medium hover:text-gray-800">সম্পূর্ণ API রেসপন্স দেখুন</summary>
+                            <pre class="mt-2 p-3 bg-gray-100 rounded-lg text-xs overflow-x-auto">${JSON.stringify(result, null, 2)}</pre>
+                        </details>
+                    `;
+                    showCustomAlert("অর্ডার সফলভাবে বুক করা হয়েছে!", 'success');
+
+                } else {
+                    const errorMessage = result.message || `HTTP Error: ${response.status}`;
+                    const errorDetails = result.errors ? JSON.stringify(result.errors, null, 2) : 'কোন বিস্তারিত ত্রুটি নেই।';
+                    responseDiv.innerHTML = `
+                        <p class="status-error text-xl mb-4 border-b pb-2">বুকিং ব্যর্থ!</p>
+                        <p class="font-medium text-red-600 mb-2">বার্তা: ${errorMessage}</p>
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-gray-600 font-medium hover:text-gray-800">ত্রুটির বিবরণ</summary>
+                            <pre class="mt-2 p-3 bg-red-50 rounded-lg text-xs overflow-x-auto">${errorDetails}</pre>
+                        </details>
+                    `;
+                    showCustomAlert(`বুকিং ব্যর্থ: ${errorMessage}`, 'error');
+                }
+
+            } catch (error) {
+                console.error('Fetch error:', error);
+                responseDiv.innerHTML = `<p class="status-error">যোগাযোগের ত্রুটি:</p><p class="text-red-600">${error.message || 'নেটওয়ার্ক সংযোগে সমস্যা হয়েছে।'}</p>`;
+                showCustomAlert("নেটওয়ার্ক বা সার্ভার সংযোগে সমস্যা।", 'error');
+            }
+        }
+
+
+        // --- Event Listeners and Initialization ---
+
+        // Key Management Listeners
+        saveKeysBtn.addEventListener('click', saveKeys);
+        clearKeysBtn.addEventListener('click', clearKeys);
+        toggleKeyDetailsBtn.addEventListener('click', toggleKeyDetails); 
+
+        // "Process Message" logic
+        processMessageBtn.addEventListener('click', () => {
+            if (mainFormSection.classList.contains('disabled')) {
+                showCustomAlert("API কী সেভ করা নেই। দয়া করে ১ নং সেকশনে কী সেভ করুন।", 'error', 5000);
+                return;
+            }
+            const message = messageInput.value;
+            const parsedData = parseOrderMessage(message);
+
+            if (parsedData && parsedData.recipient_phone) {
+                parseErrorDiv.classList.add('hidden');
+                // Generate a simple unique invoice ID
+                invoiceInput.value = 'INV-' + Date.now().toString().slice(-6); 
+                nameInput.value = parsedData.recipient_name;
+                addressInput.value = parsedData.recipient_address;
+                phoneInput.value = parsedData.recipient_phone;
+                codAmountInput.value = parsedData.cod_amount;
+                deliveryTypeSelect.value = 0; 
+                itemDescriptionInput.value = ''; 
+                noteInput.value = ''; 
+
+                confirmBookingBtn.disabled = false; 
+                showCustomAlert("ডেটা সফলভাবে প্রসেস হয়েছে। যাচাই করুন ও বুকিং কনফার্ম করুন।", 'success', 3000);
+            } else {
+                parseErrorDiv.classList.remove('hidden');
+                invoiceInput.value = '';
+                nameInput.value = '';
+                addressInput.value = '';
+                phoneInput.value = '';
+                codAmountInput.value = '';
+                confirmBookingBtn.disabled = true;
+                responseDiv.innerHTML = `<p class="text-gray-500">মেসেজ প্রসেস করতে ব্যর্থ হয়েছে। সঠিক ফরম্যাটে ইনপুট দিন।</p>`;
+                showCustomAlert("মেসেজ প্রসেসিং ব্যর্থ। ইনপুট চেক করুন।", 'error', 4000);
+            }
+        });
+
+        // "Confirm Booking" button submit handler
+        orderForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+
+            if (!API_KEY || !SECRET_KEY) {
+                showCustomAlert("বুকিং করার আগে API কী কনফিগার করুন।", 'error', 5000);
+                return;
+            }
+            
+            const orderData = {
+                invoice: invoiceInput.value,
+                recipient_name: nameInput.value,
+                recipient_address: addressInput.value,
+                recipient_phone: phoneInput.value,
+                cod_amount: parseFloat(codAmountInput.value) || 0, 
+                delivery_type: parseInt(deliveryTypeSelect.value),
+                item_description: itemDescriptionInput.value,
+                note: noteInput.value
+            };
+
+            if (!orderData.invoice || !orderData.recipient_name || !orderData.recipient_address || !orderData.recipient_phone) {
+                showCustomAlert("সব বাধ্যতামূলক ফিল্ড পূরণ করুন।", 'error', 4000);
+                return;
+            }
+
+            confirmBookingBtn.disabled = true; 
+            await createOrder(orderData);
+            confirmBookingBtn.disabled = false; 
+        });
+
+        // Initialize on load
+        window.onload = loadKeys;
+    </script>
+</body>
+</html>
