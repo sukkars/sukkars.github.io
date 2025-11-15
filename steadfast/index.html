@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steadfast Easy Booking Tool</title>
+    <title>Steadfast আধুনিক বুকিং টুল</title>
+    <!-- Tailwind CSS লোড করা হয়েছে -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom CSS - Modern & Clean Theme */
@@ -11,7 +12,7 @@
         
         body {
             font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
-            background-color: #f7f7f7; 
+            background-color: #f7f7f7; /* হালকা ব্যাকগ্রাউন্ড */
         }
 
         .modern-card {
@@ -19,25 +20,26 @@
             margin: 40px auto;
             background-color: #ffffff;
             padding: 30px;
-            border-radius: 12px; 
+            border-radius: 12px; /* গোল কোণা */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
+        /* ইনপুট ফিল্ড এবং বাটনগুলির জন্য আধুনিক স্টাইল */
         input[type="text"], input[type="number"], select, textarea {
             padding: 10px 12px;
             border: 1px solid #d1d5db;
-            border-radius: 8px; 
+            border-radius: 8px; /* গোল কোণা */
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-            border-color: #10b981;
+            border-color: #10b981; /* টিল ফোকাস রং */
             outline: 0;
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); 
         }
 
         .button-primary {
-            background: #10b981;
+            background: #10b981; /* টিল প্রাইমারি রং */
             color: #ffffff;
             border: none;
             padding: 10px 20px;
@@ -65,6 +67,7 @@
             background: #f3f4f6;
         }
 
+        /* স্ট্যাটাস ইন্ডিকেটর */
         .status-success { color: #059669; font-weight: 600; }
         .status-error { color: #ef4444; font-weight: 600; }
 
@@ -93,9 +96,9 @@
             pointer-events: none;
         }
 
-        /* ৩. API রেসপন্স কন্টেইনারের h6 স্টাইল আপডেট (Poppins/20px) */
+        /* API রেসপন্স কন্টেইনারের h6 স্টাইল */
         #response h6 {
-            font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
+            font-family: 'Inter', 'Noto Sans Bengali', sans-serif; 
             font-size: 20px; 
             line-height: 1.5;
             font-weight: 600; 
@@ -127,7 +130,7 @@
             justify-content: space-between;
             transition: all 0.3s ease-in-out;
         }
-        .key-status-success { background-color: #d1fae5; color: #059669; border: 1px solid #34d399; font-size: 0.5rem; }
+        .key-status-success { background-color: #d1fae5; color: #059669; border: 1px solid #34d399; }
         .key-status-error { background-color: #fee2e2; color: #ef4444; border: 1px solid #f87171; }
     </style>
 </head>
@@ -140,9 +143,9 @@
         <div class="mb-8">
             <h2 class="text-xl font-semibold mb-4 text-gray-700">১. Steadfast API কী সেটআপ</h2>
             
-            <!-- Compact Status Bar -->
+            <!-- Compact Status Bar: text-base for smaller font -->
             <div id="keyStatusContainer" class="key-status-container key-status-error mb-4">
-                <span id="keyStatusText" class="font-semibold text-lg"></span>
+                <span id="keyStatusText" class="font-semibold text-base"></span>
                 <button id="toggleKeyDetailsBtn" class="text-sm font-medium underline"></button>
             </div>
             
@@ -151,12 +154,12 @@
                 <div class="space-y-4">
                     <div>
                         <label for="inputApiKey" class="block text-sm font-medium text-gray-700">API Key:</label>
-                        <input type="text" id="inputApiKey" class="mt-1 w-full" placeholder="আপনার API Key">
+                        <input type="text" id="inputApiKey" class="mt-1 w-full" placeholder="আপনার API কী">
                     </div>
 
                     <div>
                         <label for="inputSecretKey" class="block text-sm font-medium text-gray-700">Secret Key:</label>
-                        <input type="text" id="inputSecretKey" class="mt-1 w-full" placeholder="আপনার SecreT Key">
+                        <input type="text" id="inputSecretKey" class="mt-1 w-full" placeholder="আপনার সিক্রেট কী">
                     </div>
                     
                     <div class="flex space-x-3 pt-2">
@@ -366,7 +369,7 @@ House-10, Boshundhara R/A, Rajshahi.
         
         // Global function to allow copying data from response section
         window.copyResponseData = function(element, dataToCopy) {
-            // Encode the string to handle special characters (like #) passed via onclick attribute
+            // Decode the string to handle special characters (like # and spaces) passed via onclick attribute
             const decodedText = decodeURIComponent(dataToCopy);
             copyToClipboard(decodedText, element);
         };
@@ -514,7 +517,7 @@ House-10, Boshundhara R/A, Rajshahi.
             
             if (hasKeys) {
                 keyStatusContainer.classList.add('key-status-success');
-                // Updated concise message (Point 1)
+                // Updated concise message
                 keyStatusText.innerHTML = '✅ API কী লোড হয়েছে।';
                 mainFormSection.classList.remove('disabled');
                 
@@ -583,26 +586,25 @@ House-10, Boshundhara R/A, Rajshahi.
                     // Text for display
                     const displayParcelId = `#${cid}`;
                     const displayTrackingLink = trackingLink;
-
-                    // Text for copying (Point 2 change: include label for Parcel ID)
-                    const copyParcelId = `Parcel ID: ${displayParcelId}`; 
+                    
+                    // Text for copying (include 2 spaces for copy)
+                    const copyParcelId = `Parcel ID:  ${displayParcelId}`; 
                     const copyTrackingLink = trackingLink; 
 
                     // Ensure copy strings are URI encoded to safely pass through onclick attribute
                     const encodedCopyParcelId = encodeURIComponent(copyParcelId);
                     const encodedCopyTrackingLink = encodeURIComponent(copyTrackingLink);
                     
-                    // Updated success response UI (Point 1)
+                    // Updated success response UI (Used &nbsp;&nbsp; for display)
                     responseDiv.innerHTML = `
                         <p class="status-success text-xl mb-4 border-b pb-2">Booking Successful!</p>
                         
                         <h6>
-                            <span class="font-bold text-gray-700">Parcel ID: </span> 
-                            <span class="copyable-text"> ${displayParcelId}</span>
+                            <span class="copyable-text">Parcel ID:&nbsp ${displayParcelId}</span> 
                             <button class="button-secondary p-1.5" onclick="copyResponseData(this, '${encodedCopyParcelId}')">Copy</button>
                         </h6>
                         <h6>
-                            <span class="font-bold text-gray-700">Tracking Link: </span>
+                            <span class="font-bold text-gray-600">Tracking Link: </span>
                             <span class="copyable-text">${displayTrackingLink}</span>
                             <a href="${displayTrackingLink}" target="_blank" class="button-secondary p-1.5 ml-2">View</a>
                             <button class="button-secondary p-1.5" onclick="copyResponseData(this, '${encodedCopyTrackingLink}')">Copy</button>
