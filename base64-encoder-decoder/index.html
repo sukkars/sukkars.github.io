@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder & Decoder - Sukkarshop Tools</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Font Awesome for icons in the footer -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CfmXzYQ+N88fI6Bf6K9z3Z/eB/vL7Tf1L3wz6Q9R8X+7lJ9J3Gj9lJ9Z2Fp2VwN0J3tQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Custom font import for a cleaner look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .btn-primary {
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 sm:p-8">
+
+    <main class="w-full max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Base64 Encoder & Decoder</h1>
+            <p class="text-lg text-gray-600">Quickly encode text to Base64 or decode Base64 back to text.</p>
+        </header>
+
+        <div class="bg-white card rounded-xl p-6 md:p-10 border border-gray-100">
+            <!-- Input Section -->
+            <div class="mb-6">
+                <label for="inputArea" class="block text-lg font-semibold text-gray-700 mb-2">Input Text / Base64 Data</label>
+                <textarea id="inputArea" rows="6" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800 transition duration-150" placeholder="Type or paste the text or Base64 string here..."></textarea>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="flex flex-wrap gap-3 justify-center mb-8">
+                <button onclick="encodeBase64()" class="btn-primary bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md flex items-center">
+                    <i class="fas fa-arrow-right mr-2"></i> Encode to Base64
+                </button>
+                <button onclick="decodeBase64()" class="btn-primary bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-md flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Decode from Base64
+                </button>
+                <button onclick="clearAll()" class="btn-primary bg-gray-400 hover:bg-gray-500 text-white font-medium py-2 px-4 rounded-lg shadow-md flex items-center">
+                    <i class="fas fa-trash-alt mr-2"></i> Clear
+                </button>
+            </div>
+
+            <!-- Output Section -->
+            <div>
+                <label for="outputArea" class="block text-lg font-semibold text-gray-700 mb-2">Output Result</label>
+                <textarea id="outputArea" rows="6" readonly class="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 resize-none transition duration-150" placeholder="Result will appear here..."></textarea>
+            </div>
+            
+            <!-- Copy Button & Message -->
+            <div class="mt-4 flex flex-col sm:flex-row justify-between items-center">
+                <button onclick="copyOutput()" class="btn-primary bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-md flex items-center w-full sm:w-auto mb-3 sm:mb-0">
+                    <i class="fas fa-copy mr-2"></i> Copy Output
+                </button>
+                <div id="message" class="text-sm font-medium text-red-600 hidden"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER as requested by the user -->
+    <footer class="text-center text-gray-500 text-sm mt-12 w-full max-w-4xl pt-8 border-t border-gray-200">
+        <!-- Footer -->
+        <p class="copyright mb-2">© Sukkarshop.com - All rights reserved</p>
+        <div class="footer-links flex flex-wrap justify-center gap-x-4 gap-y-2 text-gray-600">
+            <a href="https://sukkarshop.com" class="footer-link hover:text-blue-600 transition duration-150"><i class="fas fa-home"></i> Main Site</a>
+            <span>|</span>
+            <a href="https://tools.sukkarshop.com" class="footer-link hover:text-blue-600 transition duration-150"><i class="fas fa-tools"></i> Tools Home</a>
+            <span>|</span>
+            <a href="https://facebook.com/sukkar.shop" class="footer-link hover:text-blue-600 transition duration-150"><i class="fas fa-envelope"></i> Contact </a>
+            <span>|</span>
+            <a href="https://sukkarshop.com/contact/" class="footer-link hover:text-blue-600 transition duration-150"><i class="fas fa-info-circle"></i> About </a>
+        </div>
+        <br>
+        <p>base64-encoder-decoder tool App | Created by <a href="https://github.com/almahmudbd/" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium transition duration-150">almahmud</a></p>
+    </footer>
+
+    <script>
+        const inputArea = document.getElementById('inputArea');
+        const outputArea = document.getElementById('outputArea');
+        const messageDiv = document.getElementById('message');
+
+        // Function to show temporary message
+        function showMessage(msg, isError = false) {
+            messageDiv.textContent = msg;
+            messageDiv.className = isError 
+                ? 'text-sm font-medium text-red-600 block' 
+                : 'text-sm font-medium text-green-600 block';
+            setTimeout(() => {
+                messageDiv.className = 'text-sm font-medium text-red-600 hidden';
+            }, 3000);
+        }
+
+        // Base64 Encoding
+        function encodeBase64() {
+            const input = inputArea.value.trim();
+            if (!input) {
+                showMessage("Input field cannot be empty!", true);
+                outputArea.value = '';
+                return;
+            }
+            try {
+                // The btoa function only works reliably with ASCII strings. 
+                // For full Unicode support (like Bengali/other non-ASCII chars), 
+                // we must first convert the string to a UTF-8 sequence and then encode.
+                const utf8Bytes = new TextEncoder().encode(input);
+                const binaryString = String.fromCodePoint(...utf8Bytes);
+                const encoded = btoa(binaryString);
+                
+                outputArea.value = encoded;
+                showMessage("Text successfully encoded to Base64!");
+            } catch (e) {
+                outputArea.value = '';
+                showMessage("Encoding failed. Please check your input.", true);
+                console.error("Encoding error:", e);
+            }
+        }
+
+        // Base64 Decoding
+        function decodeBase64() {
+            const input = inputArea.value.trim();
+            if (!input) {
+                showMessage("Input field cannot be empty!", true);
+                outputArea.value = '';
+                return;
+            }
+            try {
+                // 1. Decode the Base64 string into a binary string
+                const binaryString = atob(input);
+                
+                // 2. Convert the binary string (which contains UTF-8 bytes) 
+                //    back into a readable JavaScript string.
+                const bytes = Uint8Array.from(binaryString, c => c.codePointAt(0));
+                const decoded = new TextDecoder().decode(bytes);
+
+                outputArea.value = decoded;
+                showMessage("Base64 successfully decoded to Text!");
+            } catch (e) {
+                outputArea.value = '';
+                showMessage("Decoding failed. Invalid Base64 string.", true);
+                console.error("Decoding error:", e);
+            }
+        }
+
+        // Copy functionality
+        function copyOutput() {
+            const output = outputArea.value;
+            if (!output) {
+                showMessage("No output to copy!", true);
+                return;
+            }
+
+            // Fallback for secure context issues in certain environments
+            try {
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = output;
+                tempTextarea.style.position = 'fixed'; // Prevents scrolling to the element
+                tempTextarea.style.opacity = '0'; // Make it invisible
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+                showMessage("Output copied to clipboard!");
+            } catch (err) {
+                showMessage("Failed to copy. Please copy manually.", true);
+                console.error('Copy failed:', err);
+            }
+        }
+
+        // Clear functionality
+        function clearAll() {
+            inputArea.value = '';
+            outputArea.value = '';
+            showMessage("Cleared both fields.");
+        }
+    </script>
+
+</body>
+</html>
