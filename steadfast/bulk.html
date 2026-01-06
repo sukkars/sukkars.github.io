@@ -14,7 +14,8 @@
     .btn{display:inline-block;padding:10px 15px;border-radius:8px;border:0;cursor:pointer;font-weight:600;font-size:14px;transition:0.2s}
     .btn-primary{background:var(--accent);color:#fff}
     .btn-secondary{background:#fff;color:#374151;border:1px solid #d1d5db}
-    textarea{width:100%;min-height:200px;padding:12px;border:1px solid #d1d5db;border-radius:8px;box-sizing:border-box;font-family: inherit;margin-bottom:15px}
+    textarea{width:100%;min-height:150px;padding:12px;border:1px solid #d1d5db;border-radius:8px;box-sizing:border-box;font-family: inherit;margin-bottom:15px}
+    .note-input{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:15px;font-family:inherit;box-sizing:border-box}
     .table-container{margin-top:20px;overflow-x:auto}
     table{width:100%;border-collapse:collapse;font-size:13px}
     th,td{padding:10px;border:1px solid var(--border);text-align:left}
@@ -61,6 +62,7 @@
       <table id="orderTable">
         <thead>
           <tr>
+            <th style="width: 40px;">#</th>
             <th>ইনভয়েস</th>
             <th>নাম</th>
             <th>ঠিকানা</th>
@@ -71,12 +73,16 @@
         </thead>
         <tbody id="orderBody"></tbody>
       </table>
-      <div style="margin-top:20px">
-        <button id="submitBulkBtn" class="btn btn-primary" style="width:100%; padding:15px">সবগুলো একসাথে বুকিং দিন</button>
+
+      <div style="margin-top:20px; background:#f9fafb; padding:15px; border-radius:10px; border:1px dashed #d1d5db">
+        <label style="display:block;margin-bottom:8px;font-weight:600;font-size:14px">কমন নোট (সবগুলো অর্ডারের জন্য)</label>
+        <input type="text" id="commonNote" class="note-input" placeholder="যেমন: সাবধানে ডেলিভারি করবেন / চেক করে নিতে বলবেন">
+        
+        <button id="submitBulkBtn" class="btn btn-primary" style="width:100%; padding:15px; font-size:16px">সবগুলো একসাথে বুকিং দিন</button>
       </div>
     </div>
     
-    <div id="summary" style="margin-top:15px; font-weight:600"></div>
+    <div id="summary" style="margin-top:15px; font-weight:600; text-align:center"></div>
   </div>
 
   <footer>
@@ -87,7 +93,7 @@
         <a href="https://facebook.com/sukkar.shop" class="footer-link"> Contact </a> | 
         <a href="https://github.com/almahmudbd/steadfast-easy-booking/" class="footer-link"> Help </a>
     </div>
-    <p>Steadfast Bulk Tool v1.3 | Powered by sukkarshop.com</p>
+    <p>Steadfast Bulk Tool v1.5 | Powered by sukkarshop.com</p>
   </footer>
 
   <script>
@@ -160,6 +166,7 @@
         orders.forEach((o, idx) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
+                <td style="font-weight:bold; color:#6b7280;">${idx + 1}</td>
                 <td>${o.invoice}</td>
                 <td>${o.recipient_name}</td>
                 <td>${o.recipient_address}</td>
@@ -173,23 +180,13 @@
         document.getElementById('tableWrap').style.display = orders.length ? 'block' : 'none';
     }
 
-    /**
-     * ফরম্যাটিং সহ কপি করার ফাংশন
-     */
     function copyFormattedID(id) {
         const text = `Parcel ID: #${id}`;
-        
-        // রিচ টেক্সট (HTML) তৈরি
         const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: bold;">${text}</span>`;
-        
         const type = "text/html";
         const blob = new Blob([html], { type });
         const data = [new ClipboardItem({ [type]: blob, ["text/plain"]: new Blob([text], { type: "text/plain" }) })];
-
-        navigator.clipboard.write(data).then(() => {
-            // সাকসেস ফিডব্যাক চাইলে এখানে কোড দেয়া যায়
-        }).catch(err => {
-            // ফ্যালব্যাক যদি রিচ কপি সাপোর্ট না করে
+        navigator.clipboard.write(data).catch(err => {
             const el = document.createElement('textarea');
             el.value = text;
             document.body.appendChild(el);
@@ -202,6 +199,8 @@
     document.getElementById('submitBulkBtn').onclick = async () => {
         const apiKey = localStorage.getItem(LS_KEY);
         const secretKey = localStorage.getItem(LS_SECRET);
+        const note = document.getElementById('commonNote').value.trim();
+        
         document.getElementById('submitBulkBtn').disabled = true;
         document.getElementById('summary').innerText = 'বুকিং শুরু হয়েছে...';
 
@@ -223,6 +222,7 @@
                         recipient_address: orders[i].recipient_address,
                         recipient_phone: orders[i].recipient_phone,
                         cod_amount: orders[i].cod_amount,
+                        note: note,
                         delivery_type: 0
                     })
                 });
