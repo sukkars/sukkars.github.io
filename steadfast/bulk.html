@@ -82,9 +82,12 @@
   <footer>
     <div class="footer-links">
         <a href="index.html" class="footer-link">🏠 Single Entry</a> | 
-        <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools Main</a>
+        <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools Main</a> | 
+        <a href="https://sukkarshop.com" class="footer-link">🏚️ Main Site</a> | 
+        <a href="https://facebook.com/sukkar.shop" class="footer-link"> Contact </a> | 
+        <a href="https://github.com/almahmudbd/steadfast-easy-booking/" class="footer-link"> Help </a>
     </div>
-    <p>Steadfast Bulk Tool v1.2 | Powered by sukkarshop.com</p>
+    <p>Steadfast Bulk Tool v1.3 | Powered by sukkarshop.com</p>
   </footer>
 
   <script>
@@ -170,13 +173,30 @@
         document.getElementById('tableWrap').style.display = orders.length ? 'block' : 'none';
     }
 
-    function copyToClipboard(text) {
-      const el = document.createElement('textarea');
-      el.value = text;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
+    /**
+     * ফরম্যাটিং সহ কপি করার ফাংশন
+     */
+    function copyFormattedID(id) {
+        const text = `Parcel ID: #${id}`;
+        
+        // রিচ টেক্সট (HTML) তৈরি
+        const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: bold;">${text}</span>`;
+        
+        const type = "text/html";
+        const blob = new Blob([html], { type });
+        const data = [new ClipboardItem({ [type]: blob, ["text/plain"]: new Blob([text], { type: "text/plain" }) })];
+
+        navigator.clipboard.write(data).then(() => {
+            // সাকসেস ফিডব্যাক চাইলে এখানে কোড দেয়া যায়
+        }).catch(err => {
+            // ফ্যালব্যাক যদি রিচ কপি সাপোর্ট না করে
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        });
     }
 
     document.getElementById('submitBulkBtn').onclick = async () => {
@@ -184,21 +204,6 @@
         const secretKey = localStorage.getItem(LS_SECRET);
         document.getElementById('submitBulkBtn').disabled = true;
         document.getElementById('summary').innerText = 'বুকিং শুরু হয়েছে...';
-
-        // Steadfast Bulk API typically expects an array of orders
-        const bulkPayload = {
-          data: orders.map(o => ({
-            invoice: o.invoice,
-            recipient_name: o.recipient_name,
-            recipient_address: o.recipient_address,
-            recipient_phone: o.recipient_phone,
-            cod_amount: o.cod_amount,
-            delivery_type: 0
-          }))
-        };
-
-        // Note: Some API versions use a single loop for better error tracking per row. 
-        // Applying the individual processing logic with the requested copy format.
 
         for(let i=0; i < orders.length; i++) {
             const statusCell = document.getElementById(`status-${i}`);
@@ -224,12 +229,11 @@
                 const data = await res.json();
                 if(data.status === 200) {
                     const cid = data.consignment?.consignment_id || 'N/A';
-                    const name = orders[i].recipient_name;
                     statusCell.className = 'status-success';
                     statusCell.innerHTML = `
                       <div class="parcel-id-box">
                         <span class="id-text">Parcel ID: #${cid}</span>
-                        <button class="btn btn-secondary" style="padding:2px 5px; font-size:10px;" onclick="copyToClipboard('${name}\\nParcel ID: #${cid}')">📋 Copy Info</button>
+                        <button class="btn btn-secondary" style="padding:2px 5px; font-size:10px;" onclick="copyFormattedID('${cid}')">📋 Copy ID</button>
                       </div>
                     `;
                 } else {
@@ -255,17 +259,5 @@
 
     checkKeys();
   </script>
-   <!-- Footer -->
-    <footer class="text-center text-gray-500 text-sm mt-8">
-	<div class="footer-links" style="margin-top:15px">
-        <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools Main</a> | 
-        <a href="https://sukkarshop.com" class="footer-link">🏚️ Main Site</a> | 
-        <a href="https://facebook.com/sukkar.shop" class="footer-link"> Contact </a> | 
-        <a href="https://github.com/almahmudbd/steadfast-easy-booking/" class="footer-link"> Help </a>
-	</div>
-	<p class="copyright">Steadfast Easy Booking Tool v1.73  |  Powered by sukkarshop.com</p>
-	<div class="muted" style="text-align:center;">Disclaimer: This is not an official Steadfast project.</div>
-    </footer>
-  <br/>
 </body>
 </html>
