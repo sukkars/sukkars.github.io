@@ -24,8 +24,8 @@
     .status-success{color:var(--accent);font-weight:bold}
     .status-error{color:var(--danger)}
     .key-bar{display:flex;justify-content:space-between;align-items:center;background:#f0fffa;padding:10px;border-radius:8px;margin-bottom:15px;border:1px solid #d1fae5;font-size:13px}
-    .parcel-id-box{display:flex;flex-direction:column;gap:4px;background:#e6fcf5;padding:6px;border-radius:6px;border:1px solid #c2f3e1}
-    .id-text{font-size:12px;font-weight:bold;color:#065f46}
+    .parcel-id-box{display:flex;flex-direction:column;gap:4px;background:#e6fcf5;padding:6px;border-radius:6px;border:1px solid #c2f3e1; min-width: 120px;}
+    .id-text{font-size:11px;font-weight:600;color:#065f46;margin-bottom:2px}
     footer{margin-top:30px;text-align:center;color:var(--muted);font-size:12px}
     .footer-link{color:var(--accent);text-decoration:none;margin:0 5px}
   </style>
@@ -88,12 +88,13 @@
   <footer>
     <div class="footer-links">
         <a href="index.html" class="footer-link">🏠 Single Entry</a> | 
-        <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools Main</a> | 
+        <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools Main</a>  | 
         <a href="https://sukkarshop.com" class="footer-link">🏚️ Main Site</a> | 
         <a href="https://facebook.com/sukkar.shop" class="footer-link"> Contact </a> | 
         <a href="https://github.com/almahmudbd/steadfast-easy-booking/" class="footer-link"> Help </a>
     </div>
-    <p>Steadfast Bulk Tool v1.5 | Powered by sukkarshop.com</p>
+    <p>Steadfast Bulk Tool v1.6 | Powered by sukkarshop.com</p><br/>
+    <p>Disclaimer: This is not an official Steadfast project.</p>
   </footer>
 
   <script>
@@ -111,7 +112,7 @@
     function cleanNum(str){
       if(!str) return '';
       let cleaned = String(str).replace(/[^\d০-৯]/g,'');
-      const bn=['০','১','২','৩','৪','৫','৬','৭','৮','৯'], en=['0','1','2','3','4','5','6','7','8','9'];
+      const bn=['০','১','২','৩','৪','৫','৬','৭','८','৯'], en=['0','1','2','3','4','5','6','7','8','9'];
       bn.forEach((b,i) => cleaned = cleaned.replace(new RegExp(b,'g'), en[i]));
       return cleaned;
     }
@@ -182,11 +183,20 @@
 
     function copyFormattedID(id) {
         const text = `Parcel ID: #${id}`;
-        const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: bold;">${text}</span>`;
+        // রিচ টেক্সট (HTML) তৈরি যাতে নিশ্চিতভাবে ১৬ সাইজ এবং বোল্ড কপি হয়
+        const html = `<span style="font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif; font-size: 16px; font-weight: bold; color: #000;">${text}</span>`;
+        
         const type = "text/html";
         const blob = new Blob([html], { type });
-        const data = [new ClipboardItem({ [type]: blob, ["text/plain"]: new Blob([text], { type: "text/plain" }) })];
-        navigator.clipboard.write(data).catch(err => {
+        const data = [new ClipboardItem({ 
+            [type]: blob, 
+            ["text/plain"]: new Blob([text], { type: "text/plain" }) 
+        })];
+
+        navigator.clipboard.write(data).then(() => {
+            // কপি সফল হলে একটি ছোট ভিজ্যুয়াল ফিডব্যাক (অপশনাল)
+        }).catch(err => {
+            // ফ্যালব্যাক
             const el = document.createElement('textarea');
             el.value = text;
             document.body.appendChild(el);
@@ -232,8 +242,8 @@
                     statusCell.className = 'status-success';
                     statusCell.innerHTML = `
                       <div class="parcel-id-box">
-                        <span class="id-text">Parcel ID: #${cid}</span>
-                        <button class="btn btn-secondary" style="padding:2px 5px; font-size:10px;" onclick="copyFormattedID('${cid}')">📋 Copy ID</button>
+                        <span class="id-text">ID: #${cid}</span>
+                        <button class="btn btn-secondary" style="padding:2px 5px; font-size:10px;" onclick="copyFormattedID('${cid}')">📋 Copy 16px</button>
                       </div>
                     `;
                 } else {
