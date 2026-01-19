@@ -309,12 +309,16 @@
         <tbody id="orderBody"></tbody>
       </table>
 
-      <div style="margin-top:20px; background:#f9fafb; padding:15px; border-radius:10px; border:1px dashed #ccc">
+      <form onsubmit="return false;"
+        style="margin-top:20px; background:#f9fafb; padding:15px; border-radius:10px; border:1px dashed #d1d5db">
+        <label for="commonNote" style="display:block;margin-bottom:8px;font-weight:600;font-size:14px">কমন নোট (সবগুলো
+          অর্ডারের জন্য)</label>
         <input type="text" id="commonNote" name="common_note" autocomplete="on" class="note-input"
           placeholder="যেমন: সাবধানে ডেলিভারি করবেন / চেক করে নিতে বলবেন"
           style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
-        <button id="submitBulkBtn" class="btn btn-primary" style="width:100%">সবগুলো একসাথে বুকিং দিন</button>
-      </div>
+        <button id="submitBulkBtn" class="btn btn-primary" style="width:100%; padding:15px; font-size:16px">সবগুলো
+          একসাথে বুকিং দিন</button>
+      </form>
     </div>
   </div>
 
