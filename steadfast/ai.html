@@ -19,6 +19,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
   <style>
     :root {
       --bg: #f6f7f8;
@@ -35,7 +36,7 @@
       margin: 0;
       padding: 14px;
       background: var(--bg);
-      font-family: 'Poppins', system-ui, sans-serif;
+      font-family: 'SolaimanLipi', 'Poppins', system-ui, sans-serif;
       color: var(--text);
     }
 
@@ -251,6 +252,26 @@
       text-decoration: none;
       margin: 0 5px
     }
+
+    .delete-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 10px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #dc2626;
+      opacity: 0.9;
+    }
   </style>
 </head>
 
@@ -259,7 +280,7 @@
   <div class="wrap">
     <div class="settings-bar">
       <h1 style="margin:0">Steadfast Bulk Tool</h1>
-      <button onclick="openSettings()" class="btn btn-secondary">⚙️ সেটিংস (API Keys)</button>
+      <button onclick="openSettings()" class="btn btn-secondary">⚙️ API Keys</button>
     </div>
 
     <!-- API Status Info -->
@@ -267,17 +288,6 @@
       Steadfast: <span id="stStatus">🔴</span> | Gemini AI: <span id="aiStatus">🔴</span>
     </div>
 
-    <!-- Section 1: Manual -->
-    <section>
-      <label style="display:block;margin-bottom:8px;font-weight:600">১. ম্যানুয়াল এন্ট্রি (অর্ডারগুলো --- দিয়ে আলাদা
-        করুন)</label>
-      <textarea id="bulkInput"
-        placeholder="নাম: যায়েদ&#10;ঠিকানা: মিরপুর, ঢাকা&#10;01700000000&#10;500&#10;---&#10;হামিদ, যশোর, 01800000000, 1000"></textarea>
-      <div style="display:flex;gap:10px">
-        <button id="extractBtn" class="btn btn-primary">লিস্টে যোগ করুন</button>
-        <button onclick="clearAll()" class="btn btn-secondary">সব ক্লিয়ার করুন</button>
-      </div>
-    </section>
 
     <!-- Section 2: AI -->
     <section class="ai-box">
@@ -286,9 +296,15 @@
         (মেসেজ পেস্ট করুন)</label>
       <textarea id="aiInput" style="border-color: #c4b5fd; min-height: 100px;"
         placeholder="মেসেঞ্জারের কাস্টমার মেসেজ এখানে পেস্ট করুন..."></textarea>
-      <button id="aiExtractBtn" class="btn btn-ai">AI দিয়ে তথ্য বের করুন ✨</button>
-      <span id="aiLoading" style="display: none; margin-left:10px; color:var(--ai-purple);">
-        <div class="loader"></div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button id="aiExtractBtn" class="btn btn-ai">AI দিয়ে তথ্য বের করুন ✨</button>
+        <button id="extractBtn" class="btn btn-secondary" style="font-size: 12px; padding: 8px 12px;">ম্যানুয়াল
+          এন্ট্রি</button>
+        <button onclick="clearAll()" class="btn btn-secondary" style="font-size: 12px; padding: 8px 12px;">সব
+          ক্লিয়ার</button>
+      </div>
+      <span id="aiLoading" style="display: none; margin-top:10px; color:var(--ai-purple); font-size: 12px;">
+        <div class="loader"></div> প্রসেসিং হচ্ছে...
       </span>
     </section>
 
@@ -303,6 +319,7 @@
             <th>ঠিকানা</th>
             <th>ফোন</th>
             <th>COD</th>
+            <th>মুছুন</th>
             <th>স্ট্যাটাস</th>
           </tr>
         </thead>
@@ -340,6 +357,20 @@
         </p>
       </div>
 
+      <div style="margin-bottom: 20px;">
+        <label style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">AI Model Select:</label>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <label style="font-size:13px; cursor:pointer; display:flex; align-items:center;">
+            <input type="radio" name="aiModel" value="gemini-2.5-flash-preview-09-2025" style="margin-right:8px;">
+            Gemini 2.5 Flash (Smarter, Low Limit)
+          </label>
+          <label style="font-size:13px; cursor:pointer; display:flex; align-items:center;">
+            <input type="radio" name="aiModel" value="gemini-1.5-flash" style="margin-right:8px;">
+            Gemini 1.5 Flash (Faster, High Limit)
+          </label>
+        </div>
+      </div>
+
       <div style="display:flex; gap:10px">
         <button onclick="saveSettings()" class="btn btn-primary" style="flex:1">Save</button>
         <button onclick="closeSettings()" class="btn btn-secondary" style="flex:1">Close</button>
@@ -351,17 +382,43 @@
     const LS_ST_KEY = 'steadfastApiKey';
     const LS_ST_SECRET = 'steadfastSecretKey';
     const LS_AI_KEY = 'geminiApiKey_user';
+    const LS_MODEL_KEY = 'geminiModel_user';
     let orders = [];
 
     // --- Settings Logic ---
+    window.deleteOrder = function (index) {
+      if (confirm('এই অর্ডারটি কি মুছে ফেলতে চান?')) {
+        orders.splice(index, 1);
+        render();
+      }
+    };
+
     function openSettings() {
       document.getElementById('setAiKey').value = localStorage.getItem(LS_AI_KEY) || '';
+
+      const savedModel = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-preview-09-2025';
+      const radios = document.getElementsByName('aiModel');
+      for (let r of radios) {
+        if (r.value === savedModel) r.checked = true;
+      }
+
       document.getElementById('settingsModal').style.display = 'flex';
     }
     function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
     function saveSettings() {
       localStorage.setItem(LS_AI_KEY, document.getElementById('setAiKey').value.trim());
-      alert('Gemini API Key Saved!');
+
+      const radios = document.getElementsByName('aiModel');
+      let selectedModel = 'gemini-2.5-flash-preview-09-2025'; // fallback
+      for (let r of radios) {
+        if (r.checked) {
+          selectedModel = r.value;
+          break;
+        }
+      }
+      localStorage.setItem(LS_MODEL_KEY, selectedModel);
+
+      alert('Settings Saved!');
       updateStatus();
       closeSettings();
     }
@@ -377,7 +434,7 @@
     function cleanPrefix(txt) { return txt.replace(/^(নাম|ঠিকানা|ফোন|টাকা|Name|Address|Phone|COD)[:\s-]*/gi, '').trim(); }
 
     document.getElementById('extractBtn').onclick = () => {
-      const val = document.getElementById('bulkInput').value.trim();
+      const val = document.getElementById('aiInput').value.trim();
       if (!val) return;
       const chunks = val.split(/---|\n\n/).map(s => s.trim()).filter(Boolean);
       chunks.forEach(c => {
@@ -396,35 +453,48 @@
       document.getElementById('bulkInput').value = '';
     };
 
-    // --- AI Extraction ---
+    // --- AI Extraction (Synced with ai2.html) ---
     document.getElementById('aiExtractBtn').onclick = async () => {
       const key = localStorage.getItem(LS_AI_KEY);
+      const model = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-preview-09-2025';
       const text = document.getElementById('aiInput').value.trim();
-      if (!key || !text) return alert('API Key এবং মেসেজ উভয়ই প্রয়োজন।');
+      if (!key || !text) return alert('API Key এবং টেক্সট দিন।');
 
       const btn = document.getElementById('aiExtractBtn');
+      const loader = document.getElementById('aiLoading');
       const originalText = btn.innerHTML;
+
       btn.disabled = true;
-      btn.innerHTML = '<span class="loader" style="border-color: #fff; border-top-color: transparent;"></span> প্রসেসিং হচ্ছে...';
-      btn.style.opacity = '0.8';
+      btn.innerHTML = 'প্রসেসিং...';
+      loader.style.display = 'block';
+
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: text }] }],
-            systemInstruction: { parts: [{ text: "Extract order: name, address, phone, cod. Return ONLY JSON array." }] },
+            systemInstruction: { parts: [{ text: "Extract order data: name, address, phone, cod. Return ONLY valid JSON array." }] },
             generationConfig: { responseMimeType: "application/json" }
           })
         });
         const json = await res.json();
-        const data = JSON.parse(json.candidates[0].content.parts[0].text);
+
+        if (json.error) {
+          throw new Error(json.error.message || 'API Error');
+        }
+        if (!json.candidates || !json.candidates[0]) {
+          throw new Error('No content returned from AI (Safety blocked or empty).');
+        }
+
+        const rawText = json.candidates[0].content.parts[0].text;
+        const data = JSON.parse(rawText);
         const list = Array.isArray(data) ? data : [data];
         list.forEach(o => {
           orders.push({
             name: o.name || 'N/A',
             address: o.address || 'N/A',
-            phone: cleanNum(o.phone),
+            phone: cleanNum(o.phone || ''),
             cod: cleanNum(o.cod || '0'),
             status: 'Pending'
           });
@@ -432,20 +502,19 @@
         render();
         document.getElementById('aiInput').value = '';
 
-        // Show success feedback
-        btn.innerHTML = '✓ সফল হয়েছে!';
-        btn.style.background = 'var(--accent)';
+        // Success feedback
+        btn.innerHTML = '✓ সফল!';
         setTimeout(() => {
           btn.innerHTML = originalText;
-          btn.style.background = 'var(--ai-purple)';
-          btn.disabled = false;
-          btn.style.opacity = '1';
-        }, 1500);
+        }, 2000);
+
       } catch (e) {
-        alert('AI এরর! সেটিংস চেক করুন।');
-        btn.innerHTML = originalText;
+        console.error(e);
+        alert('AI Error: ' + e.message);
+      } finally {
         btn.disabled = false;
-        btn.style.opacity = '1';
+        loader.style.display = 'none';
+        if (btn.innerHTML === 'প্রসেসিং...') btn.innerHTML = originalText;
       }
     };
 
@@ -453,7 +522,15 @@
       const b = document.getElementById('orderBody');
       b.innerHTML = '';
       orders.forEach((o, i) => {
-        b.innerHTML += `<tr><td>${i + 1}</td><td>${o.name}</td><td>${o.address}</td><td>${o.phone}</td><td>${o.cod}</td><td id="st-${i}">${o.status}</td></tr>`;
+        b.innerHTML += `<tr>
+          <td>${i + 1}</td>
+          <td>${o.name}</td>
+          <td>${o.address}</td>
+          <td>${o.phone}</td>
+          <td>${o.cod}</td>
+          <td><button class="delete-btn" onclick="deleteOrder(${i})">✕</button></td>
+          <td id="st-${i}">${o.status}</td>
+        </tr>`;
       });
       document.getElementById('count').innerText = orders.length;
       document.getElementById('tableWrap').style.display = orders.length ? 'block' : 'none';
