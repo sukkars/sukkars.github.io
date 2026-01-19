@@ -1,78 +1,278 @@
 <!DOCTYPE html>
 <html lang="bn">
-<head>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7N30L1X"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-BFD7N30L1X');
-</script>
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7N30L1X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-BFD7N30L1X');
+  </script>
+
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Steadfast Bulk Booking Tool</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{ --bg:#f6f7f8; --card:#fff; --muted:#6b7280; --accent:#10b981; --danger:#ef4444; --border:#e6eef6; --text:#1f2937; --ai-purple: #8b5cf6; }
-    body{margin:0;padding:14px;background:var(--bg);font-family: 'Poppins', system-ui, sans-serif;color:var(--text);}
-    .wrap{max-width:1100px;margin:8px auto;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.04);}
-    h1{font-size:20px;margin:0 0 15px}
-    .btn{display:inline-block;padding:10px 15px;border-radius:8px;border:0;cursor:pointer;font-weight:600;font-size:14px;transition:0.2s}
-    .btn-primary{background:var(--accent);color:#fff}
-    .btn-secondary{background:#fff;color:#374151;border:1px solid #d1dbdb}
-    .btn-ai{background:var(--ai-purple);color:#fff}
-    
-    .settings-bar{display:flex;justify-content:space-between;align-items:center;background:#fff;padding:12px;border-radius:10px;margin-bottom:20px;border:1px solid var(--border)}
-    
-    textarea{width:100%;min-height:120px;padding:12px;border:1px solid #d1d5db;border-radius:8px;box-sizing:border-box;font-family: inherit;margin-bottom:15px; outline: none;}
-    textarea:focus{border-color: var(--accent);}
-    
-    .ai-box { border: 2px dashed var(--ai-purple); border-radius: 12px; padding: 20px; background: #f5f3ff; margin-top: 25px; position: relative; }
-    .ai-badge { position: absolute; top: -12px; right: 20px; background: var(--ai-purple); color: white; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-    
-    .config-panel { background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; }
-    .config-input { display: flex; gap: 10px; margin-bottom: 10px; }
-    .config-input input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 13px; }
+    :root {
+      --bg: #f6f7f8;
+      --card: #fff;
+      --muted: #6b7280;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --border: #e6eef6;
+      --text: #1f2937;
+      --ai-purple: #8b5cf6;
+    }
 
-    .table-container{margin-top:20px;overflow-x:auto}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{padding:10px;border:1px solid var(--border);text-align:left}
-    th{background:#f9fafb;font-weight:600}
-    
-    .parcel-id-box{display:flex;flex-direction:column;gap:4px;background:#e6fcf5;padding:6px;border-radius:6px;border:1px solid #c2f3e1;}
-    .status-success{color:var(--accent);font-weight:bold}
-    
-    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
-    .modal-content { background:#fff; padding:25px; border-radius:12px; width:90%; max-width:400px; }
+    body {
+      margin: 0;
+      padding: 14px;
+      background: var(--bg);
+      font-family: 'Poppins', system-ui, sans-serif;
+      color: var(--text);
+    }
 
-    .loader { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-radius: 50%; border-top-color: transparent; animation: spin 0.8s linear infinite; margin-right: 8px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-	
-    footer{margin-top:30px;text-align:center;color:var(--muted);font-size:12px}
-    .footer-link{color:var(--accent);text-decoration:none;margin:0 5px}
+    .wrap {
+      max-width: 1100px;
+      margin: 8px auto;
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 15px
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.2s
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1dbdb
+    }
+
+    .btn-ai {
+      background: var(--ai-purple);
+      color: #fff
+    }
+
+    .settings-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border)
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-family: inherit;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .ai-box {
+      border: 2px dashed var(--ai-purple);
+      border-radius: 12px;
+      padding: 20px;
+      background: #f5f3ff;
+      margin-top: 25px;
+      position: relative;
+    }
+
+    .ai-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: var(--ai-purple);
+      color: white;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .config-panel {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+
+    .config-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .config-input input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 13px;
+    }
+
+    .table-container {
+      margin-top: 20px;
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border: 1px solid var(--border);
+      text-align: left
+    }
+
+    th {
+      background: #f9fafb;
+      font-weight: 600
+    }
+
+    .parcel-id-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: #e6fcf5;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #c2f3e1;
+    }
+
+    .id-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 2px
+    }
+
+    .status-success {
+      color: var(--accent);
+      font-weight: bold
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 5px
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 5px
+    }
   </style>
 </head>
+
 <body>
 
   <div class="wrap">
     <div class="settings-bar">
-        <h1 style="margin:0">Steadfast Bulk Tool</h1>
-        <button onclick="openSettings()" class="btn btn-secondary">⚙️ সেটিংস (API Keys)</button>
+      <h1 style="margin:0">Steadfast Bulk Tool</h1>
+      <button onclick="openSettings()" class="btn btn-secondary">⚙️ সেটিংস (API Keys)</button>
     </div>
 
     <!-- API Status Info -->
     <div id="statusStrip" style="font-size:12px; margin-bottom:15px; color:var(--muted)">
-        Steadfast: <span id="stStatus">🔴</span> | Gemini AI: <span id="aiStatus">🔴</span>
+      Steadfast: <span id="stStatus">🔴</span> | Gemini AI: <span id="aiStatus">🔴</span>
     </div>
 
     <!-- Section 1: Manual -->
     <section>
-      <label style="display:block;margin-bottom:8px;font-weight:600">১. ম্যানুয়াল এন্ট্রি (অর্ডারগুলো --- দিয়ে আলাদা করুন)</label>
-      <textarea id="bulkInput" placeholder="নাম: যায়েদ&#10;ঠিকানা: মিরপুর, ঢাকা&#10;01700000000&#10;500&#10;---&#10;হামিদ, যশোর, 01800000000, 1000"></textarea>
+      <label style="display:block;margin-bottom:8px;font-weight:600">১. ম্যানুয়াল এন্ট্রি (অর্ডারগুলো --- দিয়ে আলাদা
+        করুন)</label>
+      <textarea id="bulkInput"
+        placeholder="নাম: যায়েদ&#10;ঠিকানা: মিরপুর, ঢাকা&#10;01700000000&#10;500&#10;---&#10;হামিদ, যশোর, 01800000000, 1000"></textarea>
       <div style="display:flex;gap:10px">
         <button id="extractBtn" class="btn btn-primary">লিস্টে যোগ করুন</button>
         <button onclick="clearAll()" class="btn btn-secondary">সব ক্লিয়ার করুন</button>
@@ -82,10 +282,14 @@
     <!-- Section 2: AI -->
     <section class="ai-box">
       <div class="ai-badge">AI SMART READ</div>
-      <label style="display:block;margin-bottom:8px;font-weight:600; color: var(--ai-purple);">২. স্মার্ট এআই রিডার (মেসেজ পেস্ট করুন)</label>
-      <textarea id="aiInput" style="border-color: #c4b5fd; min-height: 80px;" placeholder="মেসেঞ্জারের কাস্টমার মেসেজ এখানে পেস্ট করুন..."></textarea>
+      <label style="display:block;margin-bottom:8px;font-weight:600; color: var(--ai-purple);">২. স্মার্ট এআই রিডার
+        (মেসেজ পেস্ট করুন)</label>
+      <textarea id="aiInput" style="border-color: #c4b5fd; min-height: 100px;"
+        placeholder="মেসেঞ্জারের কাস্টমার মেসেজ এখানে পেস্ট করুন..."></textarea>
       <button id="aiExtractBtn" class="btn btn-ai">AI দিয়ে তথ্য বের করুন ✨</button>
-      <span id="aiLoading" style="display: none; margin-left:10px; color:var(--ai-purple);"><div class="loader"></div></span>
+      <span id="aiLoading" style="display: none; margin-left:10px; color:var(--ai-purple);">
+        <div class="loader"></div>
+      </span>
     </section>
 
     <!-- Table -->
@@ -106,7 +310,9 @@
       </table>
 
       <div style="margin-top:20px; background:#f9fafb; padding:15px; border-radius:10px; border:1px dashed #ccc">
-        <input type="text" id="commonNote" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;" placeholder="কমন নোট (ঐচ্ছিক)">
+        <input type="text" id="commonNote" name="common_note" autocomplete="on" class="note-input"
+          placeholder="যেমন: সাবধানে ডেলিভারি করবেন / চেক করে নিতে বলবেন"
+          style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
         <button id="submitBulkBtn" class="btn btn-primary" style="width:100%">সবগুলো একসাথে বুকিং দিন</button>
       </div>
     </div>
@@ -115,24 +321,25 @@
   <!-- Settings Modal -->
   <div id="settingsModal" class="modal">
     <div class="modal-content">
-        <h3>⚙️ API Settings</h3>
-        <p style="font-size:12px; color:var(--muted)">আপনার এপিআই কিগুলো ব্রাউজারে সুরক্ষিত থাকবে।</p>
-        
-        <label style="font-size:13px; font-weight:600">Steadfast API Key</label>
-        <input type="password" id="setStKey" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ddd">
-        
-        <label style="font-size:13px; font-weight:600">Steadfast Secret Key</label>
-        <input type="password" id="setStSecret" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ddd">
-        
-        <hr>
-        
-        <label style="font-size:13px; font-weight:600">Gemini AI Key</label>
-        <input type="password" id="setAiKey" style="width:100%; padding:8px; margin-bottom:20px; border:1px solid #ddd">
-        
-        <div style="display:flex; gap:10px">
-            <button onclick="saveSettings()" class="btn btn-primary" style="flex:1">Save</button>
-            <button onclick="closeSettings()" class="btn btn-secondary" style="flex:1">Close</button>
-        </div>
+      <h3>⚙️ API Settings</h3>
+      <p style="font-size:12px; color:var(--muted)">আপনার এপিআই কিগুলো ব্রাউজারে সুরক্ষিত থাকবে।</p>
+
+      <label style="font-size:13px; font-weight:600">Gemini AI Key <a href="https://aistudio.google.com/app/apikey"
+          target="_blank" style="color:var(--ai-purple); text-decoration:underline; font-size:12px;">(সংগ্রহ
+          করুন)</a></label>
+      <input type="password" id="setAiKey" style="width:100%; padding:8px; margin-bottom:15px; border:1px solid #ddd">
+
+      <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:10px; border-radius:6px; margin-bottom:15px;">
+        <p style="font-size:12px; margin:0; color:#0369a1;">
+          ℹ️ <strong>Steadfast API Keys</strong> index.html থেকে সংগ্রহ করা হবে।
+          <a href="index.html" style="color:#0284c7; text-decoration:underline;">এখানে ক্লিক করে আপডেট করুন</a>
+        </p>
+      </div>
+
+      <div style="display:flex; gap:10px">
+        <button onclick="saveSettings()" class="btn btn-primary" style="flex:1">Save</button>
+        <button onclick="closeSettings()" class="btn btn-secondary" style="flex:1">Close</button>
+      </div>
     </div>
   </div>
 
@@ -144,23 +351,21 @@
 
     // --- Settings Logic ---
     function openSettings() {
-        document.getElementById('setStKey').value = localStorage.getItem(LS_ST_KEY) || '';
-        document.getElementById('setStSecret').value = localStorage.getItem(LS_ST_SECRET) || '';
-        document.getElementById('setAiKey').value = localStorage.getItem(LS_AI_KEY) || '';
-        document.getElementById('settingsModal').style.display = 'flex';
+      document.getElementById('setAiKey').value = localStorage.getItem(LS_AI_KEY) || '';
+      document.getElementById('settingsModal').style.display = 'flex';
     }
     function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
     function saveSettings() {
-        localStorage.setItem(LS_ST_KEY, document.getElementById('setStKey').value.trim());
-        localStorage.setItem(LS_ST_SECRET, document.getElementById('setStSecret').value.trim());
-        localStorage.setItem(LS_AI_KEY, document.getElementById('setAiKey').value.trim());
-        alert('Settings Saved!');
-        updateStatus();
-        closeSettings();
+      localStorage.setItem(LS_AI_KEY, document.getElementById('setAiKey').value.trim());
+      alert('Gemini API Key Saved!');
+      updateStatus();
+      closeSettings();
     }
     function updateStatus() {
-        document.getElementById('stStatus').innerText = localStorage.getItem(LS_ST_KEY) ? '🟢' : '🔴';
-        document.getElementById('aiStatus').innerText = localStorage.getItem(LS_AI_KEY) ? '🟢' : '🔴';
+      // Check both Steadfast keys from localStorage (shared with index.html)
+      const hasSteadfast = localStorage.getItem(LS_ST_KEY) && localStorage.getItem(LS_ST_SECRET);
+      document.getElementById('stStatus').innerText = hasSteadfast ? '🟢' : '🔴';
+      document.getElementById('aiStatus').innerText = localStorage.getItem(LS_AI_KEY) ? '🟢' : '🔴';
     }
 
     // --- Data Extraction ---
@@ -168,126 +373,191 @@
     function cleanPrefix(txt) { return txt.replace(/^(নাম|ঠিকানা|ফোন|টাকা|Name|Address|Phone|COD)[:\s-]*/gi, '').trim(); }
 
     document.getElementById('extractBtn').onclick = () => {
-        const val = document.getElementById('bulkInput').value.trim();
-        if(!val) return;
-        const chunks = val.split(/---|\n\n/).map(s => s.trim()).filter(Boolean);
-        chunks.forEach(c => {
-            const lines = c.split('\n').map(l => l.trim()).filter(Boolean);
-            if(lines.length >= 2) {
-                orders.push({
-                    name: cleanPrefix(lines[0]),
-                    address: cleanPrefix(lines[1]),
-                    phone: cleanNum(lines[2] || ''),
-                    cod: cleanNum(lines[3] || '0'),
-                    status: 'Pending'
-                });
-            }
-        });
-        render();
-        document.getElementById('bulkInput').value = '';
+      const val = document.getElementById('bulkInput').value.trim();
+      if (!val) return;
+      const chunks = val.split(/---|\n\n/).map(s => s.trim()).filter(Boolean);
+      chunks.forEach(c => {
+        const lines = c.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length >= 2) {
+          orders.push({
+            name: cleanPrefix(lines[0]),
+            address: cleanPrefix(lines[1]),
+            phone: cleanNum(lines[2] || ''),
+            cod: cleanNum(lines[3] || '0'),
+            status: 'Pending'
+          });
+        }
+      });
+      render();
+      document.getElementById('bulkInput').value = '';
     };
 
     // --- AI Extraction ---
     document.getElementById('aiExtractBtn').onclick = async () => {
-        const key = localStorage.getItem(LS_AI_KEY);
-        const text = document.getElementById('aiInput').value.trim();
-        if(!key || !text) return alert('API Key এবং মেসেজ উভয়ই প্রয়োজন।');
+      const key = localStorage.getItem(LS_AI_KEY);
+      const text = document.getElementById('aiInput').value.trim();
+      if (!key || !text) return alert('API Key এবং মেসেজ উভয়ই প্রয়োজন।');
 
-        document.getElementById('aiLoading').style.display = 'inline-block';
-        try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    contents: [{parts: [{text: text}]}],
-                    systemInstruction: {parts: [{text: "Extract order: name, address, phone, cod. Return ONLY JSON array."}]},
-                    generationConfig: {responseMimeType: "application/json"}
-                })
-            });
-            const json = await res.json();
-            const data = JSON.parse(json.candidates[0].content.parts[0].text);
-            const list = Array.isArray(data) ? data : [data];
-            list.forEach(o => {
-                orders.push({
-                    name: o.name || 'N/A',
-                    address: o.address || 'N/A',
-                    phone: cleanNum(o.phone),
-                    cod: cleanNum(o.cod || '0'),
-                    status: 'Pending'
-                });
-            });
-            render();
-            document.getElementById('aiInput').value = '';
-        } catch(e) { alert('AI এরর! সেটিংস চেক করুন।'); }
-        finally { document.getElementById('aiLoading').style.display = 'none'; }
+      const btn = document.getElementById('aiExtractBtn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader" style="border-color: #fff; border-top-color: transparent;"></span> প্রসেসিং হচ্ছে...';
+      btn.style.opacity = '0.8';
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: text }] }],
+            systemInstruction: { parts: [{ text: "Extract order: name, address, phone, cod. Return ONLY JSON array." }] },
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+        const json = await res.json();
+        const data = JSON.parse(json.candidates[0].content.parts[0].text);
+        const list = Array.isArray(data) ? data : [data];
+        list.forEach(o => {
+          orders.push({
+            name: o.name || 'N/A',
+            address: o.address || 'N/A',
+            phone: cleanNum(o.phone),
+            cod: cleanNum(o.cod || '0'),
+            status: 'Pending'
+          });
+        });
+        render();
+        document.getElementById('aiInput').value = '';
+
+        // Show success feedback
+        btn.innerHTML = '✓ সফল হয়েছে!';
+        btn.style.background = 'var(--accent)';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.background = 'var(--ai-purple)';
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }, 1500);
+      } catch (e) {
+        alert('AI এরর! সেটিংস চেক করুন।');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
     };
 
     function render() {
-        const b = document.getElementById('orderBody');
-        b.innerHTML = '';
-        orders.forEach((o, i) => {
-            b.innerHTML += `<tr><td>${i+1}</td><td>${o.name}</td><td>${o.address}</td><td>${o.phone}</td><td>${o.cod}</td><td id="st-${i}">${o.status}</td></tr>`;
-        });
-        document.getElementById('count').innerText = orders.length;
-        document.getElementById('tableWrap').style.display = orders.length ? 'block' : 'none';
+      const b = document.getElementById('orderBody');
+      b.innerHTML = '';
+      orders.forEach((o, i) => {
+        b.innerHTML += `<tr><td>${i + 1}</td><td>${o.name}</td><td>${o.address}</td><td>${o.phone}</td><td>${o.cod}</td><td id="st-${i}">${o.status}</td></tr>`;
+      });
+      document.getElementById('count').innerText = orders.length;
+      document.getElementById('tableWrap').style.display = orders.length ? 'block' : 'none';
     }
 
     // --- Bulk Submission ---
     document.getElementById('submitBulkBtn').onclick = async () => {
-        const apiKey = localStorage.getItem(LS_ST_KEY);
-        const secret = localStorage.getItem(LS_ST_SECRET);
-        const note = document.getElementById('commonNote').value;
-        if(!apiKey || !secret) return alert('Steadfast API Key সেটিংস থেকে সেট করুন।');
+      const apiKey = localStorage.getItem(LS_ST_KEY);
+      const secret = localStorage.getItem(LS_ST_SECRET);
+      const note = document.getElementById('commonNote').value;
+      if (!apiKey || !secret) {
+        alert('Steadfast API Key পাওয়া যায়নি। index.html এ গিয়ে API Key সেট করুন।');
+        window.location.href = 'index.html';
+        return;
+      }
 
-        document.getElementById('submitBulkBtn').disabled = true;
-        for(let i=0; i<orders.length; i++){
-            if(orders[i].status !== 'Pending') continue;
-            const cell = document.getElementById(`st-${i}`);
-            cell.innerText = '⏳...';
-            
-            try {
-                const res = await fetch('https://portal.packzy.com/api/v1/create_order', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json', 'Api-Key': apiKey, 'Secret-Key': secret},
-                    body: JSON.stringify({
-                        invoice: 'B'+Date.now().toString(36),
-                        recipient_name: orders[i].name,
-                        recipient_address: orders[i].address,
-                        recipient_phone: orders[i].phone,
-                        cod_amount: orders[i].cod,
-                        note: note,
-                        delivery_type: 0
-                    })
-                });
-                const d = await res.json();
-                if(d.status === 200) {
-                    orders[i].status = 'Success';
-                    cell.innerHTML = `<div class="parcel-id-box"><span style="font-size:11px">ID: #${d.consignment.consignment_id}</span></div>`;
-                } else { cell.innerText = '❌ Failed'; }
-            } catch(e) { cell.innerText = '⚠️ Error'; }
-            await new Promise(r => setTimeout(r, 600));
-        }
-        document.getElementById('submitBulkBtn').disabled = false;
+      document.getElementById('submitBulkBtn').disabled = true;
+      for (let i = 0; i < orders.length; i++) {
+        if (orders[i].status !== 'Pending') continue;
+        const cell = document.getElementById(`st-${i}`);
+        cell.innerText = '⏳...';
+
+        try {
+          const res = await fetch('https://portal.packzy.com/api/v1/create_order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Api-Key': apiKey, 'Secret-Key': secret },
+            body: JSON.stringify({
+              invoice: 'B' + Date.now().toString(36),
+              recipient_name: orders[i].name,
+              recipient_address: orders[i].address,
+              recipient_phone: orders[i].phone,
+              cod_amount: orders[i].cod,
+              note: note,
+              delivery_type: 0
+            })
+          });
+          const d = await res.json();
+          if (d.status === 200) {
+            orders[i].status = 'Success';
+            const parcelId = d.consignment.consignment_id;
+            cell.innerHTML = `<div class="parcel-id-box">
+                        <span class="id-text">ID: #${parcelId}</span>
+                        <button class="btn btn-secondary" style="padding:2px 5px; font-size:10px;" onclick="copyFormattedID('${parcelId}')">📋 Copy</button>
+                      </div>`;
+          } else { cell.innerText = '❌ Failed'; }
+        } catch (e) { cell.innerText = '⚠️ Error'; }
+        await new Promise(r => setTimeout(r, 600));
+      }
+      document.getElementById('submitBulkBtn').disabled = false;
     };
+
+    // কপি করার জন্য স্পেশাল ফাংশন যা ফরম্যাটিং সহ কপি করবে
+    /**
+     * Parcel ID কপি করার জন্য ফাংশন (Rich Text Format)
+     */
+    function copyFormattedID(id) {
+      const text = `Parcel ID: #${id}`;
+      // রিচ টেক্সট (HTML) - pt সাইজ ব্যবহার করা হয়েছে যাতে ডকস/ওয়ার্ডে ঠিক থাকে
+      const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16pt; font-weight: bold; color: #000; display: inline-block; background: #f7f7f7;">${text}</span>`;
+
+      const typeHtml = "text/html";
+      const typeText = "text/plain";
+
+      const blobHtml = new Blob([html], { type: typeHtml });
+      const blobText = new Blob([text], { type: typeText });
+
+      const data = [new ClipboardItem({
+        [typeHtml]: blobHtml,
+        [typeText]: blobText
+      })];
+
+      navigator.clipboard.write(data).then(() => {
+        // কপি হয়েছে বুঝানোর জন্য হালকা ফিডব্যাক (বাটনের টেক্সট পরিবর্তন)
+        const activeBtn = document.activeElement;
+        if (activeBtn && activeBtn.innerText === '📋 Copy') {
+          const original = activeBtn.innerHTML;
+          activeBtn.innerHTML = '✅ Copied';
+          setTimeout(() => { activeBtn.innerHTML = original; }, 1500);
+        }
+      }).catch(err => {
+        // ফ্যালব্যাক (প্লেন টেক্সট কপি)
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      });
+    }
 
     function clearAll() { orders = []; render(); }
     updateStatus();
   </script>
-  
-  
+
+
   <footer>
     <div class="footer-links">
-        <a href="index.html" class="footer-link"><b>📦 Single Entry</b></a> | 
-        <a href="bulk.html" class="footer-link"><b>📦 Bulk Entry</b></a> | 
-        <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools </a>  | 
-        <a href="https://sukkarshop.com" class="footer-link">🏠 Homepage</a> | 
-        <a href="https://facebook.com/sukkar.shop" class="footer-link"> Contact </a> | 
-        <a href="help.html" class="footer-link"> How to use? </a>
+      <a href="index.html" class="footer-link"><b>📦 Single Entry</b></a> |
+      <a href="bulk.html" class="footer-link"><b>📦 Bulk Entry</b></a> |
+      <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools </a> |
+      <a href="https://sukkarshop.com" class="footer-link">🏠 Homepage</a> |
+      <a href="help.html" class="footer-link"> How to use? </a>
     </div>
-    <p>Steadfast Ai Bulk Entry Tool v1.0 | Powered by sukkarshop.com</p>
+    <p>Steadfast Ai Bulk Entry Tool v1.1 | Powered by sukkarshop.com</p>
     <p>Disclaimer: This is not an official Steadfast project.</p>
   </footer>
 
 
 </body>
+
 </html>

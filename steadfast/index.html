@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Steadfast Easy Booking Tool</title>  
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
-  <link rel="manifest" href="/assets/favicon/site.webmanifest">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <title>Steadfast Easy Booking Tool</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="manifest" href="assets/favicon/site.webmanifest">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -21,7 +21,11 @@
       --text: #1f2937;
     }
 
-    html, body { height: 100%; }
+    html,
+    body {
+      height: 100%;
+    }
+
     body {
       margin: 0;
       padding: 14px;
@@ -40,11 +44,27 @@
       box-sizing: border-box
     }
 
-    h1 { font-size: 20px; margin: 0 0 15px }
-    h2 { font-size: 15px; margin: 0 0 8px; color: #374151 }
+    h1 {
+      font-size: 20px;
+      margin: 0 0 15px
+    }
 
-    label { display: block; font-size: 14px; margin-bottom: 6px; color: #374151 }
-    input, textarea, select {
+    h2 {
+      font-size: 15px;
+      margin: 0 0 8px;
+      color: #374151
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #374151
+    }
+
+    input,
+    textarea,
+    select {
       width: 100%;
       padding: 8px 10px;
       border: 1px solid #d1d5db;
@@ -53,7 +73,10 @@
       box-sizing: border-box;
     }
 
-    textarea { min-height: 76px; resize: vertical }
+    textarea {
+      min-height: 76px;
+      resize: vertical
+    }
 
     .btn {
       display: inline-block;
@@ -65,9 +88,21 @@
       font-size: 13px
     }
 
-    .btn-primary { background: var(--accent); color: #fff }
-    .btn-secondary { background: #fff; color: #374151; border: 1px solid #d1d5db }
-    .btn [disabled] { opacity: 0.6; cursor: not-allowed }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1d5db
+    }
+
+    .btn [disabled] {
+      opacity: 0.6;
+      cursor: not-allowed
+    }
 
     .key-status {
       display: flex;
@@ -78,19 +113,67 @@
       font-size: 13px
     }
 
-    .key-status.error { background: #fff6f6; border: 1px solid #fcdcdc; color: var(--danger) }
-    .key-status.success { background: #f0fffa; border: 1px solid #d1fae5; color: var(--accent) }
-    .key-status .text { font-weight: 600; font-size: 13px }
-    .key-status .small-btn { padding: 5px 8px; font-size: 12px; border-radius: 6px }
+    .key-status.error {
+      background: #fff6f6;
+      border: 1px solid #fcdcdc;
+      color: var(--danger)
+    }
 
-    .notice { background: #fffbeb; border: 1px solid #fef3c7; padding: 10px; border-radius: 8px }
-    .form-panel { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #fbfdfe }
+    .key-status.success {
+      background: #f0fffa;
+      border: 1px solid #d1fae5;
+      color: var(--accent)
+    }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
-    @media(max-width:720px) { .grid { grid-template-columns: 1fr } }
-    .full { grid-column: 1/-1 }
+    .key-status .text {
+      font-weight: 600;
+      font-size: 13px
+    }
 
-    .response { margin-top: 10px; padding: 10px; border-radius: 8px; background: #fff; border: 1px solid var(--border) }
+    .key-status .small-btn {
+      padding: 5px 8px;
+      font-size: 12px;
+      border-radius: 6px
+    }
+
+    .notice {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      padding: 10px;
+      border-radius: 8px
+    }
+
+    .form-panel {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fbfdfe
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    @media(max-width:720px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .full {
+      grid-column: 1/-1
+    }
+
+    .response {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--border)
+    }
+
     .response h6 {
       font-size: 20px;
       font-weight: 600;
@@ -106,34 +189,71 @@
       font-family: "Poppins", sans-serif;
     }
 
-    .copyable { flex: 1; margin-right: 10px; word-break: break-all; font-weight: 700 }
-    .muted { color: var(--muted); font-size: 13px }
-    .small-note { font-size: 12px; color: var(--muted); margin-top: 8px }
-    
-    footer { margin-top: 14px; text-align: center; color: var(--muted); font-size: 13px }
-    .footer-link { color: var(--accent); text-decoration: none; margin: 0 5px }
-    
-    details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 10px; outline: none; }
-    pre { background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #eee; }
-  </style>
-  
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7N30L1X"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    .copyable {
+      flex: 1;
+      margin-right: 10px;
+      word-break: break-all;
+      font-weight: 700
+    }
 
-  gtag('config', 'G-BFD7N30L1X');
-</script>
+    .muted {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px
+    }
+
+    footer {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 5px
+    }
+
+    details summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 10px;
+      outline: none;
+    }
+
+    pre {
+      background: #f9fafb;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7N30L1X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-BFD7N30L1X');
+  </script>
 </head>
+
 <body>
   <div class="wrap">
     <h1>Steadfast Easy Booking Tool</h1>
     <section>
       <h2>১. Steadfast API কী সেটআপ</h2>
       <div id="keyStatus" class="key-status error" aria-live="polite">
-        <div class="text" id="keyStatusText">❌ API কী সেভ করা নেই। <a href="https://steadfast.com.bd/user/api" target="_blank">(সংগ্রহ করুন)</a></div>
+        <div class="text" id="keyStatusText">❌ API কী সেভ করা নেই। <a href="https://steadfast.com.bd/user/api"
+            target="_blank">(সংগ্রহ করুন)</a></div>
         <div>
           <button id="toggleKeyBtn" class="btn btn-secondary small-btn">পরিবর্তন</button>
         </div>
@@ -151,7 +271,8 @@
           <button id="saveKeyBtn" class="btn btn-primary small-btn">সেভ</button>
           <button id="clearKeyBtn" class="btn btn-secondary small-btn">মুছে ফেলুন</button>
         </div>
-        <div class="small-note">⚠️ সতর্কতা: নিরাপত্তা বিবেচনায় কীগুলি আপনার ব্রাউজারের লোকাল স্টোরেজে সেভ করা হচ্ছে। আমরা আপনার কোনো ডেটা সার্ভারে সেভ করে রাখি না।</div>
+        <div class="small-note">⚠️ সতর্কতা: নিরাপত্তা বিবেচনায় কীগুলি আপনার ব্রাউজারের লোকাল স্টোরেজে সেভ করা হচ্ছে।
+          আমরা আপনার কোনো ডেটা সার্ভারে সেভ করে রাখি না।</div>
       </div>
     </section>
 
@@ -214,7 +335,8 @@ Address Example, Dhaka. (ঠিকানা)
             <input id="note" type="text" name="common_note" autocomplete="on">
           </div>
           <div class="full" style="display:flex;justify-content:flex-end">
-            <button id="confirmBtn" class="btn btn-primary" type="button" style="width:100%" disabled>বুকিং কনফার্ম</button>
+            <button id="confirmBtn" class="btn btn-primary" type="button" style="width:100%" disabled>বুকিং
+              কনফার্ম</button>
           </div>
         </div>
       </form>
@@ -226,10 +348,10 @@ Address Example, Dhaka. (ঠিকানা)
 
   <footer class="text-center text-gray-500 text-sm mt-8">
     <div class="footer-links" style="margin-top:15px">
-      <a style="font-size: 1.12em;" href="bulk.html" class="footer-link"><b>📦 Bulk Parcel Entry</b></a> |
+      <a style="font-size: 1.1em;" href="bulk.html" class="footer-link"><b>📦 Bulk Entry</b></a> |
+      <a style="font-size: 1.1em;" href="bulk.html" class="footer-link"><b>🆕 Ai Entry</b></a> |
       <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools </a> |
       <a href="https://sukkarshop.com" class="footer-link">🏠 Homepage</a> |
-      <a href="https://facebook.com/sukkar.shop" class="footer-link"> Contact </a> |
       <a href="help.html" class="footer-link"> How to use? </a>
     </div>
     <p class="copyright">Steadfast Easy Booking Tool v1.76 | Powered by sukkarshop.com</p>
@@ -341,7 +463,7 @@ Address Example, Dhaka. (ঠিকানা)
         loadKeys();
       } else { alert('API কী ও Secret কী প্রদান করুন।'); }
     });
-    
+
     clearKeyBtn.addEventListener('click', () => { localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_SECRET); loadKeys(); });
     toggleKeyBtn.addEventListener('click', () => { keyDetails.style.display = keyDetails.style.display === 'none' ? 'block' : 'none'; });
 
@@ -371,18 +493,18 @@ Address Example, Dhaka. (ঠিকানা)
 
     // কপি করার জন্য স্পেশাল ফাংশন যা ১৬ সাইজ নিশ্চিত করবে
     function copyToClipboardLarge(text) {
-        const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: bold; color: #000;">${text}</span>`;
-        const type = "text/html";
-        const blob = new Blob([html], { type });
-        const data = [new ClipboardItem({ [type]: blob, ["text/plain"]: new Blob([text], { type: "text/plain" }) })];
-        navigator.clipboard.write(data).catch(err => {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-        });
+      const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: bold; color: #000; background: #f7f7f7;">${text}</span>`;
+      const type = "text/html";
+      const blob = new Blob([html], { type });
+      const data = [new ClipboardItem({ [type]: blob, ["text/plain"]: new Blob([text], { type: "text/plain" }) })];
+      navigator.clipboard.write(data).catch(err => {
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      });
     }
 
     confirmBtn.addEventListener('click', async () => {
@@ -425,8 +547,8 @@ Address Example, Dhaka. (ঠিকানা)
               <summary>Raw response data (Click to expand)</summary>
               <pre style='font-size:12px; white-space: pre-wrap;'>${JSON.stringify(j, null, 2)}</pre>
             </details>`;
-            
-            document.getElementById('copyBtnLarge').onclick = () => copyToClipboardLarge(`Parcel Id : #${cid}`);
+
+          document.getElementById('copyBtnLarge').onclick = () => copyToClipboardLarge(`Parcel Id : #${cid}`);
         } else {
           responseDiv.innerHTML = `<div style="color:var(--danger)">❌ বুকিং ব্যর্থ: ${j.message || 'Unknown error'}</div>
           <details><summary>Error Details</summary><pre style='font-size:11px'>${JSON.stringify(j, null, 2)}</pre></details>`;
@@ -439,4 +561,5 @@ Address Example, Dhaka. (ঠিকানা)
     (function init() { loadKeys(); })();
   </script>
 </body>
+
 </html>
