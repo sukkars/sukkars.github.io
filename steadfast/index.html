@@ -235,7 +235,18 @@
       border: 1px solid #eee;
     }
 
-    /* Compact Settings Styles */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border)
+    }
+
+    /* Collapsed Settings Styles */
     .compact-view {
       display: none;
       align-items: center;
@@ -274,8 +285,7 @@
 
 <body>
   <div class="wrap">
-    <div class="settings-bar"
-      style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border: 1px solid var(--border); padding: 10px; border-radius: 10px; background: #fff;">
+    <div class="top-bar">
       <h1 style="margin:0">Steadfast Easy Booking Tool</h1>
     </div>
     <section id="settingsSection">
