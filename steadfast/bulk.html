@@ -100,7 +100,8 @@
     td {
       padding: 10px;
       border: 1px solid var(--border);
-      text-align: left
+      text-align: left;
+      font-size: 12px;
     }
 
     th {
@@ -197,12 +198,13 @@
 
 <body>
   <div class="wrap">
-    <h1>Steadfast Bulk Booking Tool</h1>
-
-    <div id="keyInfo" class="key-bar">
-      <span>🔑 API Key Loaded</span>
-      <a href="index.html" class="btn btn-secondary" style="padding:4px 8px; font-size:11px">সেটিংস পরিবর্তন</a>
+    <div class="settings-bar"
+      style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border: 1px solid var(--border); padding: 12px; border-radius: 10px; background: #fff;">
+      <h1 style="margin:0">Steadfast Bulk Booking Tool</h1>
+      <a href="index.html" class="btn btn-secondary" style="text-decoration:none">⚙️ API Keys</a>
     </div>
+
+    <div id="keyInfo" class="key-bar" style="display:none;"></div>
 
     <section>
       <label style="display:block;margin-bottom:8px;font-weight:600">নিচের স্টাইলে একাধিক মেসেজ দিন (প্রতিটি মেসেজের
@@ -283,8 +285,9 @@
 
     function checkKeys() {
       if (!localStorage.getItem(LS_KEY)) {
-        alert('আগে সেটিংস পেজ থেকে API Key সেভ করুন!');
-        window.location.href = 'index.html';
+        if (confirm('Steadfast API Key পাওয়া যায়নি। আপনি কি সেটিংসে গিয়ে Key সেট করতে চান?')) {
+          window.location.href = 'index.html';
+        }
       }
     }
 
