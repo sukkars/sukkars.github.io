@@ -30,7 +30,7 @@
       margin: 0;
       padding: 14px;
       background: var(--bg);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: 'Poppins', system-ui, sans-serif;
       color: var(--text);
     }
 
@@ -45,8 +45,8 @@
     }
 
     h1 {
-      font-size: 20px;
-      margin: 0 0 15px
+      font-size: 18px;
+      margin: 0
     }
 
     h2 {
@@ -234,6 +234,32 @@
       border-radius: 6px;
       border: 1px solid #eee;
     }
+
+    /* Compact Settings Styles */
+    .compact-view {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #d1fae5;
+      background: #f0fffa;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .compact-view h2 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .compact-view .actions {
+      display: flex;
+      gap: 10px;
+    }
   </style>
 
   <!-- Google tag (gtag.js) -->
@@ -248,34 +274,48 @@
 
 <body>
   <div class="wrap">
-    <div
-      style="border: 1px solid var(--border); padding: 12px; border-radius: 10px; background: #fff; margin-bottom: 20px;">
+    <div class="settings-bar"
+      style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border: 1px solid var(--border); padding: 12px; border-radius: 10px; background: #fff;">
       <h1 style="margin:0">Steadfast Easy Booking Tool</h1>
     </div>
-    <section>
-      <h2>১. Steadfast API কী সেটআপ</h2>
-      <div id="keyStatus" class="key-status error" aria-live="polite">
-        <div class="text" id="keyStatusText">❌ API কী সেভ করা নেই। <a href="https://steadfast.com.bd/user/api"
-            target="_blank">(সংগ্রহ করুন)</a></div>
-        <div>
-          <button id="toggleKeyBtn" class="btn btn-secondary small-btn">পরিবর্তন</button>
+    <section id="settingsSection">
+      <!-- Collapsed View -->
+      <div id="compactView" class="compact-view">
+        <h2>১. ✅ API কী লোড হয়েছে।</h2>
+        <div class="actions">
+          <button id="configureBtn" class="btn btn-secondary small-btn">⚙️ পরিবর্তন</button>
         </div>
       </div>
-      <div id="keyDetails" class="form-panel" style="margin-top:8px">
-        <div style="margin-bottom:8px">
-          <label for="apiKey">API Key</label>
-          <input id="apiKey" type="text" placeholder="আপনার API Key">
+
+      <!-- Expanded View -->
+      <div id="expandedView" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h2 style="margin:0">১. Steadfast API Key সেটআপ</h2>
+          <!-- Close button for expanded view when in edit mode -->
+          <button id="closeSettingsBtn" class="btn btn-secondary small-btn" style="display:none;">✕ Close</button>
         </div>
-        <div style="margin-bottom:8px">
-          <label for="secretKey">Secret Key</label>
-          <input id="secretKey" type="text" placeholder="আপনার Secret Key">
+
+        <div id="keyStatus" class="key-status error" style="margin-bottom:10px; display:none;">
+          <div class="text">❌ API কী সেভ করা নেই। <a href="https://steadfast.com.bd/user/api" target="_blank">(সংগ্রহ
+              করুন)</a></div>
         </div>
-        <div style="display:flex;gap:8px">
-          <button id="saveKeyBtn" class="btn btn-primary small-btn">সেভ</button>
-          <button id="clearKeyBtn" class="btn btn-secondary small-btn">মুছে ফেলুন</button>
+
+        <div class="form-panel">
+          <div style="margin-bottom:8px">
+            <label for="apiKey">API Key</label>
+            <input id="apiKey" type="text" placeholder="আপনার API Key">
+          </div>
+          <div style="margin-bottom:8px">
+            <label for="secretKey">Secret Key</label>
+            <input id="secretKey" type="text" placeholder="আপনার Secret Key">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="saveKeyBtn" class="btn btn-primary small-btn">সেভ</button>
+            <button id="clearKeyBtn" class="btn btn-secondary small-btn">মুছে ফেলুন</button>
+          </div>
+          <div class="small-note">⚠️ সতর্কতা: নিরাপত্তা বিবেচনায় কীগুলি আপনার ব্রাউজারের লোকাল স্টোরেজে সেভ করা হচ্ছে।
+          </div>
         </div>
-        <div class="small-note">⚠️ সতর্কতা: নিরাপত্তা বিবেচনায় কীগুলি আপনার ব্রাউজারের লোকাল স্টোরেজে সেভ করা হচ্ছে।
-          আমরা আপনার কোনো ডেটা সার্ভারে সেভ করে রাখি না।</div>
       </div>
     </section>
 
@@ -352,12 +392,12 @@ Address Example, Dhaka. (ঠিকানা)
   <footer class="text-center text-gray-500 text-sm mt-8">
     <div class="footer-links" style="margin-top:15px">
       <a style="font-size: 1.1em;" href="bulk.html" class="footer-link"><b>📦 Bulk Entry</b></a> |
-      <a style="font-size: 1.1em;" href="ai.html" class="footer-link"><b>🆕 Ai Entry</b></a> |
+      <a style="font-size: 1.1em;" href="ai.html" class="footer-link"><b>🆕 Ai Bulk Entry</b></a> |
       <a href="https://tools.sukkarshop.com" class="footer-link">🛠️ Tools </a> |
       <a href="https://sukkarshop.com" class="footer-link">🏠 Homepage</a> |
       <a href="help.html" class="footer-link"> How to use? </a>
     </div>
-    <p class="copyright">Steadfast Easy Booking Tool v1.76 | Powered by sukkarshop.com</p>
+    <p class="copyright">Steadfast Easy Booking Tool v1.78 | Powered by sukkarshop.com</p>
     <div class="muted" style="text-align:center;">Disclaimer: This is not an official Steadfast project.</div>
   </footer>
   <br />
@@ -367,9 +407,8 @@ Address Example, Dhaka. (ঠিকানা)
     const LS_SECRET = 'steadfastSecretKey';
 
     const keyStatus = document.getElementById('keyStatus');
-    const keyStatusText = document.getElementById('keyStatusText');
-    const toggleKeyBtn = document.getElementById('toggleKeyBtn');
-    const keyDetails = document.getElementById('keyDetails');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    // const toggleKeyBtn = ... removed
     const apiKeyInput = document.getElementById('apiKey');
     const secretKeyInput = document.getElementById('secretKey');
     const saveKeyBtn = document.getElementById('saveKeyBtn');
@@ -434,28 +473,49 @@ Address Example, Dhaka. (ঠিকানা)
 
     function setKeysVisible(loaded) {
       if (loaded) {
-        keyStatus.classList.remove('error');
-        keyStatus.classList.add('success');
-        keyStatusText.textContent = '✅ API কী লোড হয়েছে।';
+        // Connected State: Show Compact, Hide Expanded
+        document.getElementById('compactView').style.display = 'flex';
+        document.getElementById('expandedView').style.display = 'none';
+
+        // Prepare expanded view for editing (if user clicks Configure later)
+        keyStatus.style.display = 'none'; // Hide error message
+        closeSettingsBtn.style.display = 'block'; // Show close button
+
+        // Mask keys
         apiKeyInput.value = '**********';
         secretKeyInput.value = '**********';
         apiKeyInput.readOnly = true;
         secretKeyInput.readOnly = true;
-        keyDetails.style.display = 'none';
       } else {
-        keyStatus.classList.remove('success');
-        keyStatus.classList.add('error');
-        keyStatusText.innerHTML = '❌ API কী সেভ করা নেই। <a href="https://steadfast.com.bd/user/api" target="_blank">(সংগ্রহ করুন)</a>';
+        // Disconnected State: Hide Compact, Show Expanded
+        document.getElementById('compactView').style.display = 'none';
+        document.getElementById('expandedView').style.display = 'block';
+
+        keyStatus.style.display = 'block'; // Show error message
+        closeSettingsBtn.style.display = 'none'; // Hide close button (must save to close)
+
         apiKeyInput.value = '';
         secretKeyInput.value = '';
         apiKeyInput.readOnly = false;
         secretKeyInput.readOnly = false;
-        keyDetails.style.display = 'block';
       }
       updateConfirmState();
     }
 
     function loadKeys() { setKeysVisible(!!(localStorage.getItem(LS_KEY) && localStorage.getItem(LS_SECRET))); }
+
+    // Configure Button: Opens the editor
+    document.getElementById('configureBtn').addEventListener('click', () => {
+      document.getElementById('compactView').style.display = 'none';
+      document.getElementById('expandedView').style.display = 'block';
+    });
+
+    // Close Button: Cancels editing and goes back to compact (if keys exist)
+    closeSettingsBtn.addEventListener('click', () => {
+      if (localStorage.getItem(LS_KEY)) {
+        loadKeys(); // Revert to compact view
+      }
+    });
 
     saveKeyBtn.addEventListener('click', () => {
       const k = apiKeyInput.value.trim();
@@ -463,12 +523,15 @@ Address Example, Dhaka. (ঠিকানা)
       if (k && s) {
         localStorage.setItem(LS_KEY, k);
         localStorage.setItem(LS_SECRET, s);
-        loadKeys();
+        loadKeys(); // Will switch to compact view
       } else { alert('API কী ও Secret কী প্রদান করুন।'); }
     });
 
-    clearKeyBtn.addEventListener('click', () => { localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_SECRET); loadKeys(); });
-    toggleKeyBtn.addEventListener('click', () => { keyDetails.style.display = keyDetails.style.display === 'none' ? 'block' : 'none'; });
+    clearKeyBtn.addEventListener('click', () => {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_SECRET);
+      loadKeys();
+    });
 
     processBtn.addEventListener('click', () => {
       const parsed = parseMessage(messageInput.value);
