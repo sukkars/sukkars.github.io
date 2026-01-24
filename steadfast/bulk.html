@@ -151,6 +151,26 @@
       margin-bottom: 2px
     }
 
+    .delete-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 10px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #dc2626;
+      opacity: 0.9;
+    }
+
     footer {
       margin-top: 30px;
       text-align: center;
@@ -214,6 +234,7 @@
             <th>ঠিকানা</th>
             <th>ফোন</th>
             <th>COD</th>
+            <th>মুছুন</th>
             <th>স্ট্যাটাস / Parcel ID</th>
           </tr>
         </thead>
@@ -252,6 +273,13 @@
     const LS_KEY = 'steadfastApiKey';
     const LS_SECRET = 'steadfastSecretKey';
     let orders = [];
+
+    window.deleteOrder = function (index) {
+      if (confirm('এই অর্ডারটি কি মুছে ফেলতে চান?')) {
+        orders.splice(index, 1);
+        renderTable();
+      }
+    };
 
     function checkKeys() {
       if (!localStorage.getItem(LS_KEY)) {
@@ -324,6 +352,7 @@
                 <td>${o.recipient_address}</td>
                 <td>${o.recipient_phone}</td>
                 <td>${o.cod_amount}</td>
+                <td><button class="delete-btn" onclick="deleteOrder(${idx})">✕</button></td>
                 <td id="status-${idx}" class="status-pending">${o.status}</td>
             `;
         body.appendChild(tr);
