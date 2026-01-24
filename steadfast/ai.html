@@ -19,7 +19,6 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
   <style>
     :root {
       --bg: #f6f7f8;
@@ -36,7 +35,7 @@
       margin: 0;
       padding: 14px;
       background: var(--bg);
-      font-family: 'SolaimanLipi', 'Poppins', system-ui, sans-serif;
+      font-family: 'Poppins', system-ui, sans-serif;
       color: var(--text);
     }
 
@@ -166,7 +165,8 @@
     td {
       padding: 10px;
       border: 1px solid var(--border);
-      text-align: left
+      text-align: left;
+      font-size: 12px;
     }
 
     th {
@@ -361,12 +361,12 @@
         <label style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">AI Model Select:</label>
         <div style="display:flex; flex-direction:column; gap:8px;">
           <label style="font-size:13px; cursor:pointer; display:flex; align-items:center;">
-            <input type="radio" name="aiModel" value="gemini-2.5-flash-preview-09-2025" style="margin-right:8px;">
-            Gemini 2.5 Flash (Smarter, Low Limit)
+            <input type="radio" name="aiModel" value="gemini-2.5-flash-lite" style="margin-right:8px;">
+            Gemini 2.5 Flash Lite (Fastest, High Limit)
           </label>
           <label style="font-size:13px; cursor:pointer; display:flex; align-items:center;">
-            <input type="radio" name="aiModel" value="gemini-1.5-flash" style="margin-right:8px;">
-            Gemini 1.5 Flash (Faster, High Limit)
+            <input type="radio" name="aiModel" value="gemini-3-flash-preview" style="margin-right:8px;">
+            Gemini 3.0 Flash Preview (Smarter, Low Limit)
           </label>
         </div>
       </div>
@@ -396,7 +396,7 @@
     function openSettings() {
       document.getElementById('setAiKey').value = localStorage.getItem(LS_AI_KEY) || '';
 
-      const savedModel = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-preview-09-2025';
+      const savedModel = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-lite';
       const radios = document.getElementsByName('aiModel');
       for (let r of radios) {
         if (r.value === savedModel) r.checked = true;
@@ -409,7 +409,7 @@
       localStorage.setItem(LS_AI_KEY, document.getElementById('setAiKey').value.trim());
 
       const radios = document.getElementsByName('aiModel');
-      let selectedModel = 'gemini-2.5-flash-preview-09-2025'; // fallback
+      let selectedModel = 'gemini-2.5-flash-lite'; // fallback
       for (let r of radios) {
         if (r.checked) {
           selectedModel = r.value;
@@ -456,7 +456,7 @@
     // --- AI Extraction (Synced with ai2.html) ---
     document.getElementById('aiExtractBtn').onclick = async () => {
       const key = localStorage.getItem(LS_AI_KEY);
-      const model = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-preview-09-2025';
+      let model = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-lite';
       const text = document.getElementById('aiInput').value.trim();
       if (!key || !text) return alert('API Key এবং টেক্সট দিন।');
 
@@ -622,6 +622,15 @@
     }
 
     function clearAll() { orders = []; render(); }
+    function checkKeys() {
+      if (!localStorage.getItem(LS_ST_KEY)) {
+        if (confirm('Steadfast API Key পাওয়া যায়নি। আপনি কি সেটিংসে গিয়ে Key সেট করতে চান?')) {
+          window.location.href = 'index.html';
+        }
+      }
+    }
+
+    checkKeys();
     updateStatus();
   </script>
 
