@@ -444,13 +444,15 @@
         }
       });
       render();
-      document.getElementById('bulkInput').value = '';
     };
 
-    // --- AI Extraction (Synced with ai2.html) ---
+    // --- AI Extraction (Improved logic from ai2.html) ---
     document.getElementById('aiExtractBtn').onclick = async () => {
       const key = localStorage.getItem(LS_AI_KEY);
-      let model = localStorage.getItem(LS_MODEL_KEY) || 'gemini-2.5-flash-lite';
+      const radios = document.getElementsByName('aiModel');
+      let model = 'gemini-2.5-flash-lite';
+      for (let r of radios) if (r.checked) model = r.value;
+
       const text = document.getElementById('aiInput').value.trim();
       if (!key || !text) return alert('API Key এবং টেক্সট দিন।');
 
@@ -459,31 +461,37 @@
       const originalText = btn.innerHTML;
 
       btn.disabled = true;
-      btn.innerHTML = 'প্রসেসিং...';
       loader.style.display = 'block';
+
+      const prompt = `Extract customer order info from text. If multiple orders exist, return them all.
+      Rules:
+      - name: Customer Name
+      - address: Full Address
+      - phone: Digits only, MUST BE EXACTLY 11 digits. 
+      - IMPORTANT: If the customer mentions any courier service name (like Sundarban, SA Paribahan, etc.) or point delivery/hub pick up, set the phone number to '00' to skip booking.
+      - cod: Number only (default 0)
+      Return ONLY a JSON array of objects.
+      Input: ${text}`;
 
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: text }] }],
-            systemInstruction: { parts: [{ text: "Extract order data: name, address, phone, cod. Return ONLY valid JSON array." }] },
+            contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { responseMimeType: "application/json" }
           })
         });
+
         const json = await res.json();
+        if (json.error) throw new Error(json.error.message);
 
-        if (json.error) {
-          throw new Error(json.error.message || 'API Error');
-        }
-        if (!json.candidates || !json.candidates[0]) {
-          throw new Error('No content returned from AI (Safety blocked or empty).');
-        }
+        let rawText = json.candidates[0].content.parts[0].text;
+        rawText = rawText.replace(/```json|```/g, '').trim();
 
-        const rawText = json.candidates[0].content.parts[0].text;
         const data = JSON.parse(rawText);
         const list = Array.isArray(data) ? data : [data];
+
         list.forEach(o => {
           orders.push({
             name: o.name || 'N/A',
@@ -493,22 +501,16 @@
             status: 'Pending'
           });
         });
+
         render();
-        document.getElementById('aiInput').value = '';
-
-        // Success feedback
         btn.innerHTML = '✓ সফল!';
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-        }, 2000);
-
+        setTimeout(() => btn.innerHTML = originalText, 2000);
       } catch (e) {
         console.error(e);
         alert('AI Error: ' + e.message);
       } finally {
         btn.disabled = false;
         loader.style.display = 'none';
-        if (btn.innerHTML === 'প্রসেসিং...') btn.innerHTML = originalText;
       }
     };
 
@@ -552,7 +554,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Api-Key': apiKey, 'Secret-Key': secret },
             body: JSON.stringify({
-              invoice: 'B' + Date.now().toString(36),
+              invoice: 'B' + Date.now().toString(36) + i,
               recipient_name: orders[i].name,
               recipient_address: orders[i].address,
               recipient_phone: orders[i].phone,
