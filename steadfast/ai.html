@@ -617,7 +617,13 @@
       });
     }
 
-    function clearAll() { orders = []; render(); }
+    function clearAll() {
+      orders = [];
+      document.getElementById('aiInput').value = '';
+      const commonNote = document.getElementById('commonNote');
+      if (commonNote) commonNote.value = '';
+      render();
+    }
     function checkKeys() {
       if (!localStorage.getItem(LS_ST_KEY)) {
         if (confirm('Steadfast API Key পাওয়া যায়নি। আপনি কি সেটিংসে গিয়ে Key সেট করতে চান?')) {
