@@ -569,7 +569,7 @@ Address Example, Dhaka. (ঠিকানা)
 
     // কপি করার জন্য স্পেশাল ফাংশন যা ১৬ সাইজ নিশ্চিত করবে
     function copyToClipboardLarge(text) {
-      const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: bold; color: #000; background: #f7f7f7;">${text}</span>`;
+      const html = `<span style="font-family: 'Poppins', sans-serif; font-size: 16pt; font-weight: bold; color: #000; display: inline-block; background: #f7f7f7;">${text}</span>`;
       const type = "text/html";
       const blob = new Blob([html], { type });
       const data = [new ClipboardItem({ [type]: blob, ["text/plain"]: new Blob([text], { type: "text/plain" }) })];
