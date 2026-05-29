@@ -1,0 +1,7 @@
+/.agent-mem/observations
+.agent-mem/last-session.md
+.agent-mem/.cache_idx
+.agent-mem/.brainsync-salt
+.mcp.json
+.vscode/mcp.json
+/node_modules
