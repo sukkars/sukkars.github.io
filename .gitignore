@@ -17,3 +17,7 @@ CLAUDE.md
 .gemini/
 .cline/
 .agents/
+/.brainsync
+/.agent
+/.vscode
+.mcp.json
