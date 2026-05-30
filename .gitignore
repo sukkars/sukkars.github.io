@@ -1,0 +1,19 @@
+
+AGENT.md
+CLAUDE.md
+.agent-mem/
+.agent/skills/auto/flutter/SKILL.md
+.agent/skills/auto/typescript-react/SKILL.md
+.agent/skills/auto/skills-manifest.json
+.cursor/active-context.md
+
+# Auto-generated agent rules (personalized per developer)
+.brainsync/agent-rules.md
+
+# Auto-generated AI agent exclusions
+.cursorrules
+.clineRules
+.windsurfrules
+.gemini/
+.cline/
+.agents/

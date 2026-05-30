@@ -2,223 +2,860 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sukkars' Static Tools | Sukkarshop.com</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/jpeg"
-        href="https://sukkarshop.com/wp-content/uploads/2021/04/cropped-sukkar-logo-150x150.jpg">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sukkar Shop | Organic Pantry Links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --cream: #fbf9f4;
+      --paper: #ffffff;
+      --paper-2: #f0eee9;
+      --ink: #1b1c19;
+      --muted: #4f574f;
+      --line: #d8ddd5;
+      --forest: #173124;
+      --forest-2: #2d4739;
+      --sage: #4a654a;
+      --mint: #ccebc8;
+      --wood: #583b25;
+      --peach: #ffdcc3;
+      --shadow: 0 22px 60px rgba(23, 49, 36, 0.12);
+    }
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7N30L1X"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+    * {
+      box-sizing: border-box;
+    }
 
-        gtag('config', 'G-BFD7N30L1X');
-    </script>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(23, 49, 36, 0.045) 1px, transparent 1px),
+        linear-gradient(180deg, #fbf9f4 0%, #f5f3ee 62%, #fbf9f4 100%);
+      background-size: 72px 72px, auto;
+      color: var(--ink);
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      line-height: 1;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 44px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: var(--forest);
+      color: var(--mint);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 14px 28px rgba(23, 49, 36, 0.18);
+    }
+
+    .logo strong {
+      display: block;
+      color: var(--forest);
+      font-size: 19px;
+      line-height: 1.1;
+    }
+
+    .logo span:last-child {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--forest);
+      display: grid;
+      place-items: center;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .header-cta {
+      min-height: 44px;
+      border-radius: 14px;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--forest);
+      font-size: 13px;
+      font-weight: 800;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .header-cta.primary {
+      background: var(--forest);
+      border-color: var(--forest);
+      color: var(--cream);
+    }
+
+    .nav-btn:hover,
+    .header-cta:hover {
+      transform: translateY(-2px);
+      border-color: var(--sage);
+      background: var(--paper);
+    }
+
+    .header-cta.primary:hover {
+      background: var(--forest-2);
+      color: var(--cream);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-panel {
+      min-height: 620px;
+      border-radius: 28px;
+      padding: clamp(28px, 5vw, 58px);
+      background: var(--forest);
+      color: var(--cream);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 27px;
+      pointer-events: none;
+    }
+
+    .hero-panel::after {
+      content: "Sukkar";
+      position: absolute;
+      right: -20px;
+      bottom: -22px;
+      color: rgba(255, 255, 255, 0.035);
+      font-size: clamp(92px, 16vw, 190px);
+      font-weight: 800;
+      line-height: 0.8;
+      pointer-events: none;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 26px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(204, 235, 200, 0.12);
+      color: var(--mint);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      max-width: 700px;
+      margin: 0;
+      font-size: clamp(42px, 7.5vw, 88px);
+      line-height: 0.98;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 580px;
+      margin: 24px 0 0;
+      color: rgba(251, 249, 244, 0.78);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta {
+      min-height: 54px;
+      border-radius: 14px;
+      padding: 0 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .cta.primary {
+      background: var(--mint);
+      color: #092014;
+    }
+
+    .cta.secondary {
+      border: 1px solid rgba(251, 249, 244, 0.24);
+      color: var(--cream);
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+    }
+
+    .proof {
+      width: min(100%, 560px);
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .proof-item {
+      min-height: 106px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .proof-item span {
+      color: var(--mint);
+      font-size: 26px;
+    }
+
+    .proof-item strong {
+      color: rgba(251, 249, 244, 0.86);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .visual-card {
+      min-height: 620px;
+      border-radius: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 52px rgba(23, 49, 36, 0.08);
+    }
+
+    .visual-photo {
+      min-height: 330px;
+      background:
+        linear-gradient(180deg, rgba(23, 49, 36, 0.04), rgba(23, 49, 36, 0.42)),
+        url("https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=85") center/cover;
+      position: relative;
+    }
+
+    .badge {
+      position: absolute;
+      left: 22px;
+      bottom: 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: rgba(251, 249, 244, 0.94);
+      color: var(--forest);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .visual-body {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .visual-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .visual-head h2 {
+      margin: 0;
+      color: var(--forest);
+      font-size: 26px;
+      line-height: 1.16;
+    }
+
+    .open-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(204, 235, 200, 0.56);
+      color: var(--sage);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .open-pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--sage);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .category {
+      min-height: 112px;
+      padding: 15px;
+      border-radius: 18px;
+      background: var(--cream);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .category .material-symbols-outlined {
+      color: var(--wood);
+      font-size: 26px;
+    }
+
+    .category strong {
+      color: var(--forest);
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .links-section {
+      margin-top: 26px;
+      display: block;
+    }
+
+    .section-copy {
+      position: sticky;
+      top: 24px;
+      padding: 28px;
+      border-radius: 24px;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+    }
+
+    .section-copy h2 {
+      margin: 0;
+      color: var(--forest);
+      font-size: clamp(28px, 3.2vw, 40px);
+      line-height: 1.12;
+    }
+
+    .section-copy p {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .contact-strip {
+      margin-top: 22px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-link {
+      min-height: 48px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 13px;
+      color: var(--forest);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .link-card {
+      min-height: 156px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(74, 101, 74, 0.54);
+      box-shadow: 0 18px 44px rgba(23, 49, 36, 0.09);
+    }
+
+    .link-card.featured {
+      grid-column: 1 / -1;
+      min-height: 184px;
+      background: var(--forest);
+      color: var(--cream);
+    }
+
+    .link-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .link-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background: var(--paper-2);
+      color: var(--forest);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .featured .link-icon {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--mint);
+    }
+
+    .arrow {
+      color: var(--sage);
+      transition: transform 180ms ease;
+    }
+
+    .featured .arrow {
+      color: rgba(251, 249, 244, 0.76);
+    }
+
+    .link-card:hover .arrow {
+      transform: translate(3px, -3px);
+    }
+
+    .link-card h3 {
+      margin: 24px 0 7px;
+      color: var(--forest);
+      font-size: 19px;
+      line-height: 1.24;
+    }
+
+    .link-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .featured h3 {
+      color: var(--cream);
+      font-size: 30px;
+    }
+
+    .featured p {
+      max-width: 560px;
+      color: rgba(251, 249, 244, 0.72);
+    }
+
+    .promise {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .promise-item {
+      min-height: 142px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+    }
+
+    .promise-item:last-child {
+      border-right: 0;
+    }
+
+    .promise-item .material-symbols-outlined {
+      color: var(--wood);
+      font-size: 28px;
+    }
+
+    .promise-item h3 {
+      margin: 16px 0 8px;
+      color: var(--forest);
+      font-size: 17px;
+    }
+
+    .promise-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    footer {
+      margin-top: 34px;
+      padding-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: rgba(79, 87, 79, 0.82);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .footer-links a:hover {
+      color: var(--forest);
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel,
+      .visual-card {
+        min-height: auto;
+      }
+
+      .section-copy {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 24px, 1120px);
+        padding-top: 14px;
+      }
+
+      .logo span:last-child {
+        display: none;
+      }
+
+      .nav {
+        align-items: flex-start;
+      }
+
+      .header-cta {
+        width: 44px;
+        padding: 0;
+      }
+
+      .header-cta .cta-text {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+      }
+
+      .hero-panel {
+        border-radius: 22px;
+        padding: 26px;
+      }
+
+      h1 {
+        font-size: 43px;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .cta {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .proof,
+      .category-grid,
+      .link-grid,
+      .promise {
+        grid-template-columns: 1fr;
+      }
+
+      .visual-photo {
+        min-height: 245px;
+      }
+
+      .link-card.featured {
+        grid-column: auto;
+      }
+
+      .promise-item,
+      .promise-item:last-child {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .promise-item:last-child {
+        border-bottom: 0;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+
+      .footer-links {
+        justify-content: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo-container">
-                <a href="https://sukkarshop.com/"><img
-                        src="https://sukkarshop.com/wp-content/uploads/2022/09/sukkarshop.png" alt="Sukkarshop Logo"
-                        class="logo"></a>
+  <div class="shell">
+    <header class="nav" aria-label="Sukkar Shop quick navigation">
+      <a class="logo" href="https://sukkarshop.com">
+        <span class="logo-mark" style="background: transparent; box-shadow: none; overflow: visible;">
+          <span class="material-symbols-outlined" style="background: transparent; line-height: 0;">
+            <img src="favico.jpg" alt="Sukkar Shop"
+              style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; display: block;">
+          </span>
+        </span>
+        <span>
+          <strong>Sukkar Shop</strong>
+          <span>Organic essentials</span>
+        </span>
+      </a>
+
+      <nav class="nav-actions" aria-label="Social links">
+        <a class="nav-btn" href="https://www.facebook.com/sukkar.shop/" aria-label="Facebook">
+          <span class="material-symbols-outlined">groups</span>
+        </a>
+        <a class="nav-btn" href="https://wa.link/3iofh9" aria-label="WhatsApp">
+          <span class="material-symbols-outlined">chat</span>
+        </a>
+        <a class="header-cta" href="https://sukkarshop.com">
+          <span class="material-symbols-outlined">arrow_forward</span>
+          <span class="cta-text">Visit shop</span>
+        </a>
+        <a class="header-cta primary" href="https://m.me/sukkarshop">
+          <span class="material-symbols-outlined">chat</span>
+          <span class="cta-text">Order Now</span>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="links-section" aria-labelledby="links-title">
+        <h2 id="links-title" class="sr-only">Sukkar Shop links</h2>
+        <div class="link-grid">
+          <a class="link-card featured" href="https://sukkarshop.com">
+            <span class="link-top">
+              <span class="link-icon">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+              </span>
+              <span class="material-symbols-outlined arrow">open_in_new</span>
+            </span>
+            <div>
+              <h3>Official Website</h3>
+              <p>Browse fresh collections and place orders directly from Sukkar Shop.</p>
             </div>
-            <h1 class="title">Sukkars' Free Tools</h1>
-            <p class="subtitle">
-                A curated collection of essential online tools to streamline your workflow
-            </p>
-        </header>
+          </a>
 
-        <!-- Search Box -->
-        <div class="search-container">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" class="search-box" placeholder="Search tools..."
-                onkeyup="searchTools()">
-        </div>
-
-        <!-- Tools List View -->
-        <div class="tools-list" id="toolsList">
-            <!-- Tool 1 -->
-            <a href="/steadfast/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-solid fa-paper-plane" style="color: #34a487;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">Steadfast Easy Booking Tool</h3>
-                    <p class="list-desc">Quickly book your Steadfast parcel just by pasting shop order message.</p>
-                </div>
-            </a>
-
-            <!-- Tool 2 -->
-            <a href="https://peacetv.vercel.app/" class="list-item" target="_blank">
-                <div class="list-icon">
-                    <i class="fas fa-tv" style="color: #6366f1;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">Live Islamic TV</h3>
-                    <p class="list-desc">Watch Peace TV (Bangla, English, Urdu) and Saudi Quran/Sunnah channels live.
-                    </p>
-                </div>
-            </a>
-
-            <!-- Tool 3 -->
-            <a href="/visual-html-bbcode/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-code" style="color: #8b5cf6;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">HTML to BBCode Converter</h3>
-                    <p class="list-desc">Convert rich text or HTML to BBCode format for forums and message boards.</p>
-                </div>
-            </a>
-
-            <!-- Tool 4 -->
-            <a href="https://visrec.vercel.app/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-music" style="color: #ef4444;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">Recorder & Visualizer</h3>
-                    <p class="list-desc">Visualize or Record your sound with this interactive and responsive sound
-                        visualizer.</p>
-                </div>
-            </a>
-
-            <!-- Tool 5 -->
-            <a href="/woo-csv-generator/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-file-csv" style="color: #f59e0b;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">WooCommerce CSV Generator</h3>
-                    <p class="list-desc">Generate properly formatted CSV files for bulk importing products to
-                        WooCommerce.</p>
-                </div>
-            </a>
-
-            <!-- Tool 6 -->
-            <a href="https://sms.sukkarshop.com/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-comment-sms"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">Personal Bulk SMS Assistant</h3>
-                    <p class="list-desc">Send personalized bulk SMS messages with ease and track responses efficiently.
-                    </p>
-                </div>
-            </a>
-
-            <!-- Tool 7 -->
-            <a href="/fresh-note/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-sticky-note"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">Fresh Notes</h3>
-                    <p class="list-desc">Your thoughts and notes, organized beautifully.</p>
-                </div>
-            </a>
-
-            <!-- Tool 8 -->
-            <a href="/base64-encoder-decoder/" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-lock" style="color: #3b82f6;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">Base64 Decoder/Encoder</h3>
-                    <p class="list-desc">Quickly encode or decode text and files to/from Base64 format with our
-                        efficient tool.</p>
-                </div>
-            </a>
-
-            <!-- Tool 9 -->
-            <a href="/whatsapp-link-gen/" class="list-item">
-                <div class="list-icon">
-                    <i class="fab fa-whatsapp" style="color: #10b981;"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">WhatsApp Link Generator</h3>
-                    <p class="list-desc">Create clickable WhatsApp message links with predefined text for easy sharing.
-                    </p>
-                </div>
-            </a>
-
-            <!-- Tool 10 -->
-            <a href="#" class="list-item">
-                <div class="list-icon">
-                    <i class="fas fa-tools"></i>
-                </div>
-                <div class="list-content">
-                    <h3 class="list-title">More Online Tools</h3>
-                    <p class="list-desc">Explore our complete collection of online utilities and productivity tools.</p>
-                </div>
-            </a>
-
-
-        </div>
-
-        <!-- No Results Message -->
-        <div class="no-results" id="noResults">
-            <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-            <h3>No tools found</h3>
-            <p>Try adjusting your search query</p>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            <p class="copyright">
-                © 2020-2026 Sukkarshop.com - All rights reserved
-            </p>
-            <div class="footer-links">
-                <a href="https://sukkarshop.com" class="footer-link">
-                    <i class="fas fa-home"></i> Main Site
-                </a>
-                <a href="https://facebook.com/sukkar.shop" class="footer-link">
-                    <i class="fas fa-envelope"></i> Contact
-                </a>
-                <a href="https://sukkarshop.com/contact/" class="footer-link">
-                    <i class="fas fa-info-circle"></i> About
-                </a>
+          <a class="link-card" href="https://www.facebook.com/sukkar.shop/">
+            <span class="link-top">
+              <span class="link-icon"><span class="material-symbols-outlined">groups</span></span>
+              <span class="material-symbols-outlined arrow">north_east</span>
+            </span>
+            <div>
+              <h3>Facebook Community</h3>
+              <p>Daily updates, customer notes, Tips, and shop announcements.</p>
             </div>
-            <br />
-        </footer>
-    </div>
-    <script>
-        function searchTools() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toUpperCase();
-            const list = document.getElementById('toolsList');
-            const items = list.getElementsByClassName('list-item');
-            const noResults = document.getElementById('noResults');
-            let visibleCount = 0;
+          </a>
 
-            for (let i = 0; i < items.length; i++) {
-                const title = items[i].querySelector('.list-title').textContent;
-                const desc = items[i].querySelector('.list-desc').textContent;
-                const text = title + ' ' + desc;
-                if (text.toUpperCase().indexOf(filter) > -1) {
-                    items[i].style.display = "flex";
-                    visibleCount++;
-                } else {
-                    items[i].style.display = "none";
-                }
-            }
-            if (visibleCount === 0 && filter.length > 0) {
-                noResults.style.display = "block";
-                list.style.display = "none";
-            } else {
-                noResults.style.display = "none";
-                list.style.display = "grid";
-            }
-        }
-    </script>
+          <a class="link-card" href="https://www.messenger.com/channel/sukkar.shop">
+            <span class="link-top">
+              <span class="link-icon"><span class="material-symbols-outlined">mark_unread_chat_alt</span></span>
+              <span class="material-symbols-outlined arrow">north_east</span>
+            </span>
+            <div>
+              <h3>Messenger Channel</h3>
+              <p>Fast stock alerts and new product updates as they arrive.</p>
+            </div>
+          </a>
+
+          <a class="link-card" href="https://wa.link/3iofh9">
+            <span class="link-top">
+              <span class="link-icon"><span class="material-symbols-outlined">support_agent</span></span>
+              <span class="material-symbols-outlined arrow">north_east</span>
+            </span>
+            <div>
+              <h3>WhatsApp Concierge</h3>
+              <p>Ask about product availability, delivery, and personal shopping.</p>
+            </div>
+          </a>
+
+          <a class="link-card" href="https://youtube.com/@sukkarshop">
+            <span class="link-top">
+              <span class="link-icon"><span class="material-symbols-outlined">smart_display</span></span>
+              <span class="material-symbols-outlined arrow">north_east</span>
+            </span>
+            <div>
+              <h3>YouTube Channel</h3>
+              <p>Sourcing stories, prep guides, and simple food ideas.</p>
+            </div>
+          </a>
+
+          <a class="link-card" href="https://www.instagram.com/shop.sukkar">
+            <span class="link-top">
+              <span class="link-icon"><span class="material-symbols-outlined">photo_camera</span></span>
+              <span class="material-symbols-outlined arrow">north_east</span>
+            </span>
+            <div>
+              <h3>Instagram Gallery</h3>
+              <p>Product styling, pantry ideas, and fresh organic moments.</p>
+            </div>
+          </a>
+
+          <a class="link-card" href="mailto:store@sukkarshop.com">
+            <span class="link-top">
+              <span class="link-icon"><span class="material-symbols-outlined">mail</span></span>
+              <span class="material-symbols-outlined arrow">north_east</span>
+            </span>
+            <div>
+              <h3>Email Inquiries</h3>
+              <p>For wholesale, corporate orders, collaborations, and formal requests.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="promise" aria-label="Sukkar Shop values">
+        <div class="promise-item">
+          <span class="material-symbols-outlined">eco</span>
+          <h3>Carefully selected</h3>
+          <p>Organic groceries, pantry staples, and seasonal finds chosen with everyday family needs in mind.</p>
+        </div>
+        <div class="promise-item">
+          <span class="material-symbols-outlined">support_agent</span>
+          <h3>Personal order help</h3>
+          <p>Message on WhatsApp for availability, product suggestions, delivery support, and quick answers.</p>
+        </div>
+        <div class="promise-item">
+          <span class="material-symbols-outlined">notifications_active</span>
+          <h3>Fresh updates</h3>
+          <p>Follow our social channels for new arrivals, restock alerts, recipes, and shop announcements.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© 2026 Sukkar Shop. Organic essentials.</span>
+      <span class="footer-links">
+        <a href="https://sukkarshop.com">Main site</a>
+        <a href="https://www.facebook.com/sukkar.shop/">Facebook</a>
+        <a href="tel:+8801312278792">Make a Call</a>
+      </span>
+    </footer>
+  </div>
 </body>
 
 </html>

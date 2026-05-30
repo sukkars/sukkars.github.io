@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sukkar Shop | Organic &amp; Artisanal Groceries</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#2c1604",
+                        "on-tertiary-container": "#cea689",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#506b50",
+                        "outline-variant": "#c2c8c2",
+                        "on-surface": "#1b1c19",
+                        "primary-fixed-dim": "#b0cdbb",
+                        "inverse-on-surface": "#f2f1ec",
+                        "primary-container": "#2d4739",
+                        "background": "#fbf9f4",
+                        "surface": "#fbf9f4",
+                        "primary": "#173124",
+                        "on-background": "#1b1c19",
+                        "tertiary": "#3f2611",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#ccebc8",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#b0cdbb",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ccebc8",
+                        "on-surface-variant": "#424844",
+                        "tertiary-container": "#583b25",
+                        "surface-variant": "#e4e2dd",
+                        "surface-container-low": "#f5f3ee",
+                        "on-primary-container": "#98b5a3",
+                        "primary-fixed": "#ccead6",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fbf9f4",
+                        "outline": "#727973",
+                        "tertiary-fixed": "#ffdcc3",
+                        "surface-container": "#f0eee9",
+                        "on-secondary-fixed-variant": "#334d34",
+                        "surface-container-highest": "#e4e2dd",
+                        "on-tertiary-fixed-variant": "#5d4029",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#30312e",
+                        "surface-container-high": "#eae8e3",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#dbdad5",
+                        "secondary": "#4a654a",
+                        "on-secondary-fixed": "#07200b",
+                        "tertiary-fixed-dim": "#e8bea0",
+                        "on-primary-fixed": "#062014",
+                        "surface-tint": "#496455",
+                        "secondary-fixed-dim": "#b0ceae",
+                        "on-primary-fixed-variant": "#324c3e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "600px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "40px",
+                        "gutter": "20px",
+                        "stack-lg": "40px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Plus Jakarta Sans", "sans-serif"],
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .organic-card {
+            background: #ffffff;
+            border: 1px solid #e4e2dd;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .organic-card:hover {
+            border-color: #4a654a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(23, 49, 36, 0.1);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .bg-noise {
+            background-image: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background min-h-screen flex flex-col selection:bg-secondary-container">
+    <main class="flex-grow pt-16 pb-12 px-margin-mobile md:px-margin-desktop max-w-[500px] mx-auto w-full">
+        <!-- Organic Profile Header -->
+        <section class="flex flex-col items-center text-center gap-6 mb-12">
+            <div class="relative group">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-tr from-secondary to-primary-container rounded-full blur opacity-25 group-hover:opacity-40 transition duration-1000">
+                </div>
+                <div
+                    class="relative w-32 h-32 rounded-full p-1 bg-surface border border-outline-variant overflow-hidden">
+                    <img alt="Fresh Organic Produce" class="w-full h-full object-cover rounded-full"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCFCpuykCMJAVHQnYdapo_SQMo4ahvMvFIWa_Yr4mcFyL9IK92OSRA1LPFEc9bU0cyx3k4etvuqSTgpUmY5T9Jo50AHQjE_Y3jL3MkFlCpT6kzuEFPvpig4-3QD9T_MIi43eQkXEXJzYXiomXyekR7cO8rdmA1I2yYLAZhB06qJjCJ1q1DmATq0A3YE7q3Ek4Ttomc9Gxe9e4_L_Vz0Hi8XxUAL3bnamIeNc2F3beoYDQz-m-svvHT9wcRxyhE6XOr08g2rxVSgsM" />
+                </div>
+            </div>
+            <div class="space-y-3">
+                <h1 class="text-3xl font-bold tracking-tight text-primary">Artisanal Groceries</h1>
+                <p class="text-sm text-on-surface-variant font-medium px-6 leading-relaxed">
+                    Premium organic selections curated for health-conscious living. Fresh from the earth to your
+                    doorstep.
+                </p>
+            </div>
+        </section>
+        <!-- Navigation Links -->
+        <div class="flex flex-col gap-4">
+            <!-- Featured Link: Website -->
+            <a class="organic-card group relative flex items-center gap-4 p-5 bg-primary text-white rounded-xl overflow-hidden border-none"
+                href="https://sukkarshop.com">
+                <div class="absolute inset-0 bg-noise opacity-10 pointer-events-none"></div>
+                <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-white/10 text-white">
+                    <span class="material-symbols-outlined text-2xl"
+                        style="font-variation-settings: 'FILL' 1;">eco</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-lg leading-tight">Official Website</p>
+                    <p class="text-[11px] text-primary-fixed-dim uppercase tracking-widest font-bold mt-1">Shop Fresh
+                        Collections</p>
+                </div>
+                <span
+                    class="material-symbols-outlined opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all">arrow_forward</span>
+            </a>
+            <!-- Highlighted Link: Facebook -->
+            <a class="organic-card flex items-center gap-4 p-5 rounded-xl group"
+                href="https://www.facebook.com/sukkar.shop/">
+                <div
+                    class="w-12 h-12 flex items-center justify-center rounded-lg bg-secondary-container text-on-secondary-container">
+                    <span class="material-symbols-outlined text-2xl"
+                        style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-on-surface">Facebook Community</p>
+                    <p class="text-xs text-on-surface-variant">Daily harvest updates &amp; recipes</p>
+                </div>
+                <span
+                    class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+            </a>
+            <!-- Regular Links -->
+            <a class="organic-card flex items-center gap-4 p-5 rounded-xl group"
+                href="https://www.messenger.com/channel/sukkar.shop">
+                <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container text-primary">
+                    <span class="material-symbols-outlined text-2xl">chat</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-on-surface">Messenger Channel</p>
+                    <p class="text-xs text-on-surface-variant">Quick stock alerts</p>
+                </div>
+                <span
+                    class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+            <a class="organic-card flex items-center gap-4 p-5 rounded-xl group" href="https://youtube.com/@sukkarshop">
+                <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container text-primary">
+                    <span class="material-symbols-outlined text-2xl">smart_display</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-on-surface">YouTube Kitchen</p>
+                    <p class="text-xs text-on-surface-variant">Sourcing &amp; prep guides</p>
+                </div>
+                <span
+                    class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+            <a class="organic-card flex items-center gap-4 p-5 rounded-xl group"
+                href="https://www.instagram.com/shop.sukkar">
+                <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container text-primary">
+                    <span class="material-symbols-outlined text-2xl">photo_library</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-on-surface">Instagram Gallery</p>
+                    <p class="text-xs text-on-surface-variant">Organic farm aesthetics</p>
+                </div>
+                <span
+                    class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+            <a class="organic-card flex items-center gap-4 p-5 rounded-xl group" href="https://wa.link/3iofh9">
+                <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-secondary text-on-secondary">
+                    <span class="material-symbols-outlined text-2xl"
+                        style="font-variation-settings: 'FILL' 1;">support_agent</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-on-surface">WhatsApp Concierge</p>
+                    <p class="text-xs text-on-surface-variant">Personal shopper assistance</p>
+                </div>
+                <span
+                    class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+            <a class="organic-card flex items-center gap-4 p-5 rounded-xl group" href="mailto:store@sukkarshop.com">
+                <div
+                    class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container text-primary border border-outline-variant">
+                    <span class="material-symbols-outlined text-2xl">mail</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-on-surface">Email Inquiries</p>
+                    <p class="text-xs text-on-surface-variant">Corporate orders &amp; wholesale</p>
+                </div>
+                <span
+                    class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+        </div>
+        <!-- Social Icons -->
+        <div class="flex justify-center gap-8 mt-12">
+            <a class="text-primary/70 hover:text-primary transition-all scale-100 hover:scale-110"
+                href="https://www.instagram.com/shop.sukkar">
+                <span class="material-symbols-outlined text-2xl">nest_cam_indoor</span>
+            </a>
+            <a class="text-primary/70 hover:text-primary transition-all scale-100 hover:scale-110"
+                href="https://wa.link/3iofh9">
+                <span class="material-symbols-outlined text-2xl">chat_bubble</span>
+            </a>
+            <a class="text-primary/70 hover:text-primary transition-all scale-100 hover:scale-110"
+                href="mailto:store@sukkarshop.com">
+                <span class="material-symbols-outlined text-2xl">contact_support</span>
+            </a>
+        </div>
+    </main>
+    <footer class="w-full py-12 px-margin-mobile flex flex-col items-center gap-6 mt-auto bg-surface-container-low/50">
+        <img alt="Sukkar Shop" class="h-10 object-contain grayscale brightness-50 contrast-125"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiOYMGTdllSwuhecDPEHIORnXYBa82hHMdN4LELBKDpgov4W_B9ogLKwbRMOLQLByXhohvoMOak-F6LiayTHBOl62W_LDzy4XkA_BLSSjZvCnkHjfMDYMfTg0eXMHRKPv7fF7dz4gXY5RXmeiglrTOI0w-orzmIeJS590J61W8UFME3D-vS_4_S0zpSbkHKKiyId3TegQEAWzs-w_r7ZWFw2LG0d15imHKXAZWp_pxqAgWOI0p8Nfw7tIUzRnReAE9M8yrrxpKj_k" />
+        <div class="flex gap-6 text-[11px] tracking-[0.2em] uppercase text-on-surface-variant/60 font-bold">
+            <a class="hover:text-primary transition-colors" href="#">Privacy</a>
+            <a class="hover:text-primary transition-colors" href="#">Terms</a>
+            <a class="hover:text-primary transition-colors" href="#">Sourcing</a>
+        </div>
+        <p class="text-on-surface-variant/40 text-[10px] font-medium tracking-wide">
+            © 2024 SUKKAR SHOP ORGANIC. ALL RIGHTS RESERVED.
+        </p>
+    </footer>
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.organic-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = `all 0.5s cubic-bezier(0.22, 1, 0.36, 1) ${index * 0.08}s`;
+            observer.observe(card);
+        });
+    </script>
+</body>
+
+</html>
